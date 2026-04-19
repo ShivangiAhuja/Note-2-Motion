@@ -3,558 +3,541 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Note2Motion — AI Learning Studio 🌸</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<title>Note2Motion — AI Learning Studio</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          display: ['Poppins', 'sans-serif'],
+          sans: ['Nunito', 'sans-serif'],
+        },
+        animation: {
+          'shimmer': 'shimmer 2.5s linear infinite',
+          'float': 'float 6s ease-in-out infinite',
+          'float-slow': 'float 9s ease-in-out infinite',
+          'blob': 'blob 7s infinite',
+          'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          'gradient': 'gradient 6s ease infinite',
+          'bounce-slow': 'bounce 3s ease-in-out infinite',
+          'spin-slow': 'spin 20s linear infinite',
+          'fade-up': 'fadeUp 0.6s ease-out',
+          'scale-in': 'scaleIn 0.4s ease-out',
+        },
+        keyframes: {
+          shimmer: {
+            '0%': { backgroundPosition: '-200% 0' },
+            '100%': { backgroundPosition: '200% 0' },
+          },
+          float: {
+            '0%, 100%': { transform: 'translate(0px, 0px) rotate(0deg)' },
+            '50%': { transform: 'translate(20px, -30px) rotate(5deg)' },
+          },
+          blob: {
+            '0%, 100%': { transform: 'translate(0px, 0px) scale(1)' },
+            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+          },
+          gradient: {
+            '0%, 100%': { backgroundPosition: '0% 50%' },
+            '50%': { backgroundPosition: '100% 50%' },
+          },
+          fadeUp: {
+            '0%': { opacity: '0', transform: 'translateY(20px)' },
+            '100%': { opacity: '1', transform: 'translateY(0)' },
+          },
+          scaleIn: {
+            '0%': { opacity: '0', transform: 'scale(0.95)' },
+            '100%': { opacity: '1', transform: 'scale(1)' },
+          },
+        },
+      }
+    }
+  }
+</script>
+
 <style>
-:root {
-  --lavender: #c7b9ff;
-  --pink: #ffc6e3;
-  --sky: #b8e3ff;
-  --mint: #c8f5d8;
-  --peach: #ffd9b8;
-  --purple: #a78bfa;
-  --pink-dark: #f472b6;
-  --blue-dark: #60a5fa;
-  --mint-dark: #6ee7b7;
-  --text: #4a4458;
-  --text-soft: #7a7390;
-  --white: #fefcff;
-  --card: rgba(255, 255, 255, 0.75);
-  --shadow-soft: 0 20px 50px -20px rgba(167, 139, 250, 0.25);
-  --shadow-glow: 0 0 40px rgba(236, 153, 216, 0.3);
-}
+  * { -webkit-tap-highlight-color: transparent; }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #fef3f7 0%, #e0e7ff 50%, #dbeafe 100%);
+    min-height: 100vh;
+    color: #2d2d2d;
+  }
 
-body {
-  font-family: 'Nunito', sans-serif;
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-  background:
-    linear-gradient(135deg, #fce7ff 0%, #e0e7ff 35%, #ddf4ff 70%, #d1fae5 100%);
-  background-size: 200% 200%;
-  animation: bgShift 18s ease-in-out infinite;
-}
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: rgba(255,255,255,0.3); }
+  ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #c4b5fd, #f0abfc); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #a78bfa, #e879f9); }
 
-@keyframes bgShift {
-  0%, 100% { background-position: 0% 0%; }
-  50% { background-position: 100% 100%; }
-}
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% auto;
+    animation: gradient 6s ease infinite;
+  }
 
-/* Floating pastel blobs */
-.blob {
-  position: fixed; border-radius: 50%;
-  filter: blur(80px); opacity: 0.5; z-index: 0;
-  pointer-events: none;
-}
-.blob-1 { width: 400px; height: 400px; background: #ffc6e3; top: -100px; left: -100px; animation: floatA 20s ease-in-out infinite; }
-.blob-2 { width: 350px; height: 350px; background: #c7b9ff; top: 40%; right: -120px; animation: floatB 25s ease-in-out infinite; }
-.blob-3 { width: 300px; height: 300px; background: #b8e3ff; bottom: -100px; left: 30%; animation: floatC 22s ease-in-out infinite; }
+  /* Primary CTA with shimmer */
+  .cta-button {
+    position: relative;
+    background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
+    background-size: 200% auto;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+      0 10px 30px -5px rgba(139, 92, 246, 0.5),
+      0 0 0 0 rgba(236, 72, 153, 0.5);
+  }
+  .cta-button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.6), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  .cta-button:hover {
+    background-position: right center;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow:
+      0 20px 40px -10px rgba(139, 92, 246, 0.6),
+      0 0 60px -10px rgba(236, 72, 153, 0.6);
+  }
+  .cta-button::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2.5s linear infinite;
+    pointer-events: none;
+  }
+  .cta-button:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+  .cta-button:disabled::after { display: none; }
 
-@keyframes floatA { 0%,100% { transform: translate(0,0); } 50% { transform: translate(50px,80px); } }
-@keyframes floatB { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-80px,60px); } }
-@keyframes floatC { 0%,100% { transform: translate(0,0); } 50% { transform: translate(60px,-50px); } }
+  /* Floating input labels */
+  .float-input { position: relative; }
+  .float-input input,
+  .float-input textarea,
+  .float-input select {
+    width: 100%;
+    padding: 24px 16px 10px 48px;
+    font-size: 15px;
+    border: 2px solid rgba(226, 232, 240, 0.8);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.85);
+    transition: all 0.3s;
+    font-family: inherit;
+    color: #2d2d2d;
+  }
+  .float-input textarea { padding-top: 30px; min-height: 140px; resize: vertical; line-height: 1.6; }
+  .float-input input:focus,
+  .float-input textarea:focus,
+  .float-input select:focus {
+    outline: none;
+    border-color: #a78bfa;
+    background: white;
+    box-shadow:
+      0 0 0 4px rgba(167, 139, 250, 0.15),
+      0 10px 30px -10px rgba(139, 92, 246, 0.3);
+    transform: translateY(-1px);
+  }
+  .float-input label {
+    position: absolute;
+    left: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+    color: #64748b;
+    font-weight: 600;
+    pointer-events: none;
+    transition: all 0.2s ease;
+  }
+  .float-input.textarea label {
+    top: 16px;
+    transform: none;
+    font-size: 13px;
+  }
+  .float-input input:focus ~ label,
+  .float-input input:not(:placeholder-shown) ~ label,
+  .float-input textarea:focus ~ label,
+  .float-input textarea:not(:placeholder-shown) ~ label,
+  .float-input select:focus ~ label,
+  .float-input select:valid ~ label {
+    top: 8px;
+    transform: none;
+    font-size: 12px;
+    color: #7c3aed;
+  }
+  .float-input .icon {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    font-size: 20px;
+    pointer-events: none;
+  }
+  .float-input.textarea .icon { top: 18px; }
 
-/* Sparkles */
-.sparkle {
-  position: fixed; pointer-events: none; z-index: 1;
-  color: #ffe4f0; font-size: 20px;
-  animation: twinkle 3s ease-in-out infinite;
-}
-@keyframes twinkle {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.3); }
-}
+  /* Glass effect */
+  .glass {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
 
-.wrap {
-  position: relative; z-index: 2;
-  max-width: 1050px; margin: 0 auto; padding: 40px 20px;
-}
+  /* Pill chip toggle */
+  .chip-toggle {
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 2px solid rgba(226, 232, 240, 0.8);
+    background: white;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .chip-toggle:hover {
+    border-color: #c4b5fd;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -5px rgba(139, 92, 246, 0.3);
+  }
+  .chip-toggle.active {
+    background: linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6);
+    background-size: 200% auto;
+    color: white;
+    border-color: transparent;
+    box-shadow:
+      0 10px 25px -5px rgba(139, 92, 246, 0.5),
+      0 0 30px -5px rgba(236, 72, 153, 0.4);
+    animation: gradient 6s ease infinite;
+  }
 
-/* Header */
-header { text-align: center; margin-bottom: 36px; }
+  /* Stat card accent colors */
+  .stat-pink { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
+  .stat-purple { background: linear-gradient(135deg, #ede9fe, #ddd6fe); }
+  .stat-blue { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+  .stat-cyan { background: linear-gradient(135deg, #cffafe, #a5f3fc); }
 
-.logo {
-  display: inline-flex; align-items: center; gap: 14px;
-  font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3.2rem;
-  background: linear-gradient(135deg, #ec4899 0%, #a855f7 50%, #3b82f6 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  letter-spacing: -1px;
-}
-.logo-icon {
-  width: 64px; height: 64px;
-  background: linear-gradient(135deg, var(--pink) 0%, var(--lavender) 50%, var(--sky) 100%);
-  border-radius: 22px; display: flex; align-items: center; justify-content: center;
-  font-size: 32px;
-  box-shadow: 0 10px 30px rgba(167,139,250,0.35), inset 0 -4px 10px rgba(255,255,255,0.6);
-  animation: wobble 4s ease-in-out infinite;
-}
-@keyframes wobble {
-  0%,100% { transform: rotate(-3deg); }
-  50% { transform: rotate(3deg); }
-}
+  .stat-icon-pink { background: linear-gradient(135deg, #f472b6, #ec4899); }
+  .stat-icon-purple { background: linear-gradient(135deg, #a78bfa, #8b5cf6); }
+  .stat-icon-blue { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
+  .stat-icon-cyan { background: linear-gradient(135deg, #22d3ee, #06b6d4); }
 
-.tagline {
-  font-size: 1.15rem; color: var(--text-soft);
-  max-width: 560px; margin: 14px auto 0;
-  line-height: 1.6; font-weight: 500;
-}
+  /* Scene card video-like */
+  .scene-video {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 50%, #db2777 100%);
+    box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.4);
+    transition: all 0.4s;
+  }
+  .scene-video::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6);
+    border-radius: 24px;
+    z-index: -1;
+    filter: blur(12px);
+    opacity: 0.6;
+    transition: opacity 0.4s;
+  }
+  .scene-video:hover { transform: translateY(-8px) scale(1.01); }
+  .scene-video:hover::before { opacity: 1; }
 
-/* Progress steps */
-.steps {
-  display: flex; justify-content: center; align-items: center;
-  gap: 8px; margin: 28px auto; flex-wrap: wrap;
-}
-.step {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 16px; border-radius: 999px;
-  background: rgba(255,255,255,0.6); backdrop-filter: blur(10px);
-  font-weight: 700; font-size: 13px; color: var(--text-soft);
-  border: 1px solid rgba(255,255,255,0.8);
-  transition: all 0.3s;
-}
-.step.active {
-  background: linear-gradient(135deg, var(--pink), var(--lavender));
-  color: white;
-  box-shadow: 0 6px 20px rgba(236,153,216,0.4);
-  transform: scale(1.05);
-}
-.step-dot { font-size: 16px; }
-.step-arrow { color: rgba(167,139,250,0.4); font-size: 18px; }
+  .scene-topic-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.34;
+    transition: transform 0.6s ease, opacity 0.6s ease;
+    transform: scale(1.03);
+  }
+  .scene-video:hover .scene-topic-image {
+    transform: scale(1.08);
+    opacity: 0.42;
+  }
+  .scene-image-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.25), transparent 40%),
+                linear-gradient(180deg, rgba(34, 9, 81, 0.25) 0%, rgba(17, 8, 38, 0.55) 100%);
+    pointer-events: none;
+  }
+  .scene-topic-image.hidden-image {
+    display: none;
+  }
 
-/* Card */
-.card {
-  background: var(--card);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.6);
-  border-radius: 28px;
-  padding: 36px;
-  margin-bottom: 24px;
-  box-shadow: var(--shadow-soft);
-  animation: cardIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-@keyframes cardIn {
-  from { opacity: 0; transform: translateY(30px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
+  /* Shimmer skeleton */
+  .skeleton {
+    background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s linear infinite;
+  }
 
-.card-title {
-  font-family: 'Poppins', sans-serif; font-size: 1.5rem; font-weight: 700;
-  margin-bottom: 24px;
-  background: linear-gradient(135deg, #ec4899, #a855f7);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  display: flex; align-items: center; gap: 10px;
-}
+  /* Loading dots */
+  .dot-loader { display: inline-flex; gap: 4px; }
+  .dot-loader span {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: currentColor;
+    animation: dotBounce 1.4s infinite ease-in-out;
+  }
+  .dot-loader span:nth-child(1) { animation-delay: -0.32s; }
+  .dot-loader span:nth-child(2) { animation-delay: -0.16s; }
+  @keyframes dotBounce {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+    40% { transform: scale(1); opacity: 1; }
+  }
 
-/* Floating-label inputs */
-.field { position: relative; margin-bottom: 20px; }
-.field input, .field textarea, .field select {
-  width: 100%; padding: 18px 18px 18px 48px;
-  border: 2px solid rgba(199,185,255,0.35);
-  border-radius: 16px;
-  font-size: 15px; font-family: inherit; font-weight: 500;
-  background: rgba(255,255,255,0.7); color: var(--text);
-  transition: all 0.25s; outline: none;
-}
-.field textarea { min-height: 150px; resize: vertical; line-height: 1.6; padding-top: 22px; }
-.field select { appearance: none; cursor: pointer; padding-right: 40px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a78bfa' viewBox='0 0 16 16'%3E%3Cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
-.field input:focus, .field textarea:focus, .field select:focus {
-  border-color: var(--purple);
-  background: white;
-  box-shadow: 0 0 0 5px rgba(167,139,250,0.15), 0 8px 20px rgba(167,139,250,0.12);
-}
-.field-icon {
-  position: absolute; left: 18px; top: 18px; font-size: 18px;
-  pointer-events: none;
-}
-.field textarea ~ .field-icon { top: 22px; }
-.field-label {
-  position: absolute; left: 48px; top: 50%; transform: translateY(-50%);
-  color: var(--text-soft); font-weight: 600; font-size: 15px;
-  pointer-events: none; transition: all 0.2s; background: transparent;
-  padding: 0 4px;
-}
-.field input:focus ~ .field-label,
-.field input:not(:placeholder-shown) ~ .field-label,
-.field textarea:focus ~ .field-label,
-.field textarea:not(:placeholder-shown) ~ .field-label {
-  top: 0; left: 40px; font-size: 12px;
-  color: var(--purple);
-  background: white; padding: 0 8px;
-}
-.field textarea ~ .field-label { top: 22px; transform: none; }
-.field textarea:focus ~ .field-label,
-.field textarea:not(:placeholder-shown) ~ .field-label { top: -8px; transform: none; }
+  /* Step indicator */
+  .step-connector {
+    flex: 1; height: 3px;
+    background: linear-gradient(90deg, #c4b5fd, #e2e8f0);
+    border-radius: 2px;
+    margin: 0 8px;
+    transition: all 0.4s;
+  }
+  .step-connector.active {
+    background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+    background-size: 200% auto;
+    animation: gradient 3s ease infinite;
+  }
 
-/* Grid */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-@media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+  /* Quiz option polish */
+  .quiz-opt { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+  .quiz-opt:not(.disabled):hover {
+    transform: translateX(6px);
+    border-color: #a78bfa !important;
+    box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.25);
+  }
 
-/* Language chips */
-.chip-row { display: flex; flex-wrap: wrap; gap: 10px; }
-.chip {
-  padding: 12px 20px; border-radius: 999px; cursor: pointer;
-  background: rgba(255,255,255,0.7);
-  border: 2px solid rgba(199,185,255,0.35);
-  font-weight: 700; font-size: 14px; color: var(--text-soft);
-  transition: all 0.25s; user-select: none;
-  display: flex; align-items: center; gap: 6px;
-}
-.chip:hover {
-  border-color: var(--purple); color: var(--purple);
-  transform: translateY(-2px);
-}
-.chip.active {
-  background: linear-gradient(135deg, var(--pink) 0%, var(--lavender) 50%, var(--sky) 100%);
-  color: white; border-color: transparent;
-  box-shadow: 0 8px 22px rgba(236,153,216,0.45);
-  transform: translateY(-2px);
-}
+  /* Difficulty */
+  .diff-easy { background: linear-gradient(135deg, #bbf7d0, #86efac); color: #14532d; }
+  .diff-medium { background: linear-gradient(135deg, #fed7aa, #fdba74); color: #7c2d12; }
+  .diff-hard { background: linear-gradient(135deg, #fecaca, #fca5a5); color: #7f1d1d; }
 
-/* Button */
-.btn-primary {
-  background: linear-gradient(135deg, #f472b6 0%, #a855f7 50%, #60a5fa 100%);
-  background-size: 200% 100%;
-  color: white; border: none; padding: 18px 36px;
-  border-radius: 999px; font-size: 16px; font-weight: 700;
-  cursor: pointer; font-family: inherit;
-  display: inline-flex; align-items: center; gap: 10px;
-  box-shadow: 0 12px 30px rgba(168,85,247,0.35);
-  transition: all 0.3s; position: relative; overflow: hidden;
-}
-.btn-primary:hover {
-  background-position: 100% 0%;
-  transform: translateY(-3px);
-  box-shadow: 0 18px 40px rgba(168,85,247,0.5);
-}
-.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-.btn-primary::after {
-  content: ''; position: absolute; top: 0; left: -100%;
-  width: 100%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: 0.5s;
-}
-.btn-primary:hover::after { left: 100%; }
-
-/* Loading dots */
-.dots { display: inline-flex; gap: 4px; }
-.dots span {
-  width: 8px; height: 8px; background: white; border-radius: 50%;
-  animation: bounce-dot 1.4s ease-in-out infinite;
-}
-.dots span:nth-child(2) { animation-delay: 0.15s; }
-.dots span:nth-child(3) { animation-delay: 0.3s; }
-@keyframes bounce-dot {
-  0%, 80%, 100% { transform: scale(0.6); opacity: 0.6; }
-  40% { transform: scale(1); opacity: 1; }
-}
-
-/* Status bar */
-.status {
-  display: flex; align-items: center; gap: 14px;
-  padding: 16px 22px; border-radius: 18px; font-weight: 600;
-  margin-bottom: 20px;
-  background: linear-gradient(135deg, rgba(255,198,227,0.4), rgba(199,185,255,0.4));
-  border: 1px solid rgba(255,255,255,0.6);
-}
-.status.completed { background: linear-gradient(135deg, rgba(200,245,216,0.6), rgba(184,227,255,0.5)); color: #065f46; }
-.status.failed { background: linear-gradient(135deg, rgba(255,198,198,0.5), rgba(255,217,184,0.4)); color: #991b1b; }
-
-/* Stats */
-.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 28px; }
-@media (max-width: 640px) { .stats-row { grid-template-columns: 1fr 1fr; } }
-.stat {
-  background: rgba(255,255,255,0.8);
-  border-radius: 18px; padding: 18px; text-align: center;
-  border: 1px solid rgba(255,255,255,0.8);
-  transition: transform 0.2s;
-}
-.stat:hover { transform: translateY(-4px); }
-.stat-icon { font-size: 26px; margin-bottom: 6px; }
-.stat-value { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #ec4899, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
-.stat-label { font-size: 11px; color: var(--text-soft); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 4px; }
-
-/* Tabs */
-.tabs {
-  display: flex; gap: 6px; padding: 6px;
-  background: rgba(255,255,255,0.7); border-radius: 18px; margin-bottom: 22px;
-  flex-wrap: wrap;
-}
-.tab {
-  flex: 1; padding: 12px 16px; border-radius: 14px;
-  cursor: pointer; text-align: center; font-weight: 700;
-  color: var(--text-soft); transition: all 0.25s; font-size: 14px;
-  min-width: 100px;
-}
-.tab.active {
-  background: linear-gradient(135deg, var(--pink), var(--lavender));
-  color: white;
-  box-shadow: 0 6px 16px rgba(236,153,216,0.35);
-}
-.tab-panel { display: none; animation: fadeIn 0.4s; }
-.tab-panel.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-/* Concept card */
-.concept {
-  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(253,242,255,0.6));
-  border: 1px solid rgba(255,255,255,0.8);
-  border-left: 5px solid var(--purple);
-  border-radius: 18px; padding: 22px; margin-bottom: 14px;
-  transition: transform 0.2s;
-}
-.concept:hover { transform: translateX(6px); }
-.concept-head { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
-.concept-title { font-weight: 800; font-size: 1.1rem; font-family: 'Poppins', sans-serif; color: var(--text); }
-.concept-summary { color: var(--text-soft); line-height: 1.65; margin-bottom: 12px; font-weight: 500; }
-.kw-row { display: flex; flex-wrap: wrap; gap: 6px; }
-.kw {
-  background: linear-gradient(135deg, rgba(199,185,255,0.35), rgba(255,198,227,0.3));
-  color: var(--purple); padding: 5px 12px; border-radius: 999px;
-  font-size: 12px; font-weight: 700;
-}
-.diff {
-  padding: 4px 12px; border-radius: 999px;
-  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
-}
-.diff-easy { background: #c8f5d8; color: #065f46; }
-.diff-medium { background: #ffe4b8; color: #92400e; }
-.diff-hard { background: #ffc6c6; color: #991b1b; }
-
-/* Scenes */
-.scene-card {
-  background: linear-gradient(135deg, #fce7ff 0%, #ddf4ff 100%);
-  border-radius: 24px; padding: 24px; margin-bottom: 18px;
-  border: 1px solid rgba(255,255,255,0.8);
-}
-.scene-head {
-  font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: 700;
-  color: var(--text); margin-bottom: 16px;
-  display: flex; align-items: center; gap: 10px;
-}
-.scene-stage {
-  background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
-  border-radius: 20px; padding: 40px 24px; min-height: 260px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; border: 2px dashed rgba(167,139,250,0.3);
-  box-shadow: inset 0 4px 12px rgba(167,139,250,0.08);
-}
-.scene-visual {
-  font-size: 5rem; margin-bottom: 18px;
-  animation: bounce 2s ease-in-out infinite;
-  filter: drop-shadow(0 6px 12px rgba(167,139,250,0.3));
-}
-@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-18px); } }
-.scene-narration {
-  font-size: 1.1rem; line-height: 1.6; max-width: 500px;
-  color: var(--text); font-weight: 600;
-}
-.scene-controls {
-  display: flex; align-items: center; gap: 12px; margin-top: 18px;
-}
-.play-btn {
-  width: 52px; height: 52px; border-radius: 50%; border: none;
-  background: linear-gradient(135deg, #f472b6, #a855f7);
-  color: white; cursor: pointer; font-size: 20px;
-  box-shadow: 0 8px 18px rgba(168,85,247,0.35);
-  transition: transform 0.2s; display: flex; align-items: center; justify-content: center;
-}
-.play-btn:hover { transform: scale(1.08); }
-.scene-progress { flex: 1; height: 8px; background: rgba(199,185,255,0.3); border-radius: 4px; overflow: hidden; }
-.scene-progress-bar { height: 100%; background: linear-gradient(90deg, var(--pink-dark), var(--purple)); width: 0%; transition: width 0.3s; border-radius: 4px; }
-.scene-step-info { font-size: 13px; color: var(--text-soft); font-weight: 700; min-width: 50px; text-align: right; }
-
-/* Quiz */
-.quiz {
-  background: rgba(255,255,255,0.85);
-  border: 1px solid rgba(255,255,255,0.8);
-  border-radius: 20px; padding: 24px; margin-bottom: 16px;
-  transition: all 0.2s;
-}
-.quiz-head { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
-.quiz-q {
-  font-weight: 700; font-size: 1.05rem; color: var(--text);
-  flex: 1; line-height: 1.5;
-}
-.q-badge {
-  background: linear-gradient(135deg, var(--pink), var(--lavender));
-  color: white; padding: 6px 12px; border-radius: 10px;
-  font-size: 12px; font-weight: 800; letter-spacing: 0.5px;
-}
-.q-options { display: grid; gap: 10px; }
-.q-option {
-  display: flex; align-items: center; gap: 14px;
-  padding: 14px 18px; border-radius: 14px;
-  background: rgba(255,255,255,0.6);
-  border: 2px solid rgba(199,185,255,0.35);
-  cursor: pointer; transition: all 0.2s; font-weight: 600;
-}
-.q-option:hover:not(.disabled) {
-  border-color: var(--purple);
-  background: white;
-  transform: translateX(6px);
-}
-.q-option.disabled { cursor: not-allowed; }
-.q-option.correct {
-  background: linear-gradient(135deg, #c8f5d8, #a7f3d0);
-  border-color: var(--mint-dark); color: #065f46;
-}
-.q-option.wrong {
-  background: linear-gradient(135deg, #ffd3d3, #fecaca);
-  border-color: #fca5a5; color: #991b1b;
-}
-.q-letter {
-  width: 34px; height: 34px; border-radius: 10px;
-  background: white; border: 2px solid rgba(199,185,255,0.4);
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 14px; color: var(--purple); flex-shrink: 0;
-}
-.q-option.correct .q-letter { background: var(--mint-dark); color: white; border-color: var(--mint-dark); }
-.q-option.wrong .q-letter { background: #fca5a5; color: white; border-color: #fca5a5; }
-.q-explain {
-  margin-top: 14px; padding: 16px;
-  background: linear-gradient(135deg, rgba(255,217,184,0.4), rgba(255,198,227,0.3));
-  border-radius: 14px; border-left: 4px solid var(--peach);
-  font-weight: 600; line-height: 1.5; font-size: 14px;
-  animation: fadeIn 0.4s;
-}
-
-/* Empty */
-.empty { text-align: center; padding: 60px 20px; color: var(--text-soft); }
-.empty-icon { font-size: 4rem; margin-bottom: 14px; opacity: 0.6; }
-
-/* Footer */
-footer {
-  text-align: center; padding: 30px; color: var(--text-soft);
-  font-size: 13px; font-weight: 600;
-}
-footer a { color: var(--purple); text-decoration: none; }
+  /* Animated blobs */
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.5;
+    pointer-events: none;
+  }
 </style>
 </head>
-<body>
+<body class="font-sans antialiased">
 
-<!-- Background blobs -->
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
-<div class="blob blob-3"></div>
+<!-- Animated Background Blobs -->
+<div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+  <div class="blob w-96 h-96 bg-pink-300 top-0 -left-20 animate-blob"></div>
+  <div class="blob w-96 h-96 bg-purple-300 top-1/3 right-0 animate-blob" style="animation-delay: 2s"></div>
+  <div class="blob w-96 h-96 bg-blue-300 bottom-0 left-1/3 animate-blob" style="animation-delay: 4s"></div>
 
-<!-- Sparkles -->
-<div class="sparkle" style="top:15%; left:10%;">✨</div>
-<div class="sparkle" style="top:25%; right:15%; animation-delay:0.5s;">💫</div>
-<div class="sparkle" style="top:60%; left:8%; animation-delay:1s;">⭐</div>
-<div class="sparkle" style="bottom:20%; right:10%; animation-delay:1.5s;">✨</div>
-<div class="sparkle" style="top:40%; right:30%; animation-delay:2s;">🌟</div>
+  <!-- Floating decorative elements -->
+  <div class="absolute top-20 right-10 text-4xl animate-float">✨</div>
+  <div class="absolute top-40 left-10 text-3xl animate-float-slow">🌸</div>
+  <div class="absolute bottom-40 right-20 text-4xl animate-float" style="animation-delay: 3s">💫</div>
+  <div class="absolute top-1/2 left-5 text-2xl animate-float-slow" style="animation-delay: 1s">⭐</div>
+</div>
 
-<div class="wrap">
+<div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
 
-  <header>
-    <div class="logo">
-      <div class="logo-icon">🎀</div>
-      <span>Note2Motion</span>
+  <!-- Hero -->
+  <header class="text-center mb-12 animate-fade-up">
+    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6 shadow-sm">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-pink-500"></span>
+      </span>
+      <span class="text-sm font-bold text-slate-700">AI-Powered · Live</span>
     </div>
-    <p class="tagline">Transform your study notes into cute AI-powered concepts, animated scenes, and interactive quizzes — in any language! 🌸</p>
 
-    <div class="steps">
-      <div class="step active" id="sstep-1"><span class="step-dot">📝</span> Write Notes</div>
-      <span class="step-arrow">→</span>
-      <div class="step" id="sstep-2"><span class="step-dot">🧠</span> AI Magic</div>
-      <span class="step-arrow">→</span>
-      <div class="step" id="sstep-3"><span class="step-dot">🎬</span> Learn & Play</div>
-    </div>
+    <h1 class="font-display font-black text-5xl sm:text-6xl md:text-7xl leading-tight mb-4">
+      <span class="gradient-text">Note2Motion</span>
+    </h1>
+    <p class="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto font-semibold">
+      Turn boring study notes into 🎬 animated scenes, 🧠 concepts & 🎯 interactive quizzes — in seconds.
+    </p>
   </header>
 
-  <!-- Input -->
-  <div class="card">
-    <h2 class="card-title">🌷 Create Your Lesson</h2>
-
-    <div class="field">
-      <span class="field-icon">📘</span>
-      <input id="title" type="text" placeholder=" " value="Photosynthesis" />
-      <label class="field-label" for="title">Lesson Title</label>
-    </div>
-
-    <div class="field">
-      <span class="field-icon">📝</span>
-      <textarea id="notes" placeholder=" ">Photosynthesis is the process by which green plants use sunlight, water, and carbon dioxide to produce glucose and oxygen. It occurs in chloroplasts and involves chlorophyll, which captures light energy. The light-dependent reactions occur in the thylakoid membranes, while the Calvin cycle takes place in the stroma.</textarea>
-      <label class="field-label" for="notes">Paste your study notes here...</label>
-    </div>
-
-    <div class="grid-2">
-      <div>
-        <div style="font-weight:700; margin-bottom:10px; color:var(--text); font-size:14px;">🌍 Output Language</div>
-        <div class="chip-row" id="langChips">
-          <div class="chip active" data-lang="en">🇬🇧 English</div>
-          <div class="chip" data-lang="hi">🇮🇳 हिंदी</div>
-          <div class="chip" data-lang="hinglish">🌟 Hinglish</div>
-        </div>
+  <!-- Step Indicator -->
+  <div class="max-w-2xl mx-auto mb-10 animate-fade-up" style="animation-delay: 0.1s">
+    <div class="flex items-center">
+      <div class="flex flex-col items-center">
+        <div id="step-1" class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 text-white flex items-center justify-center font-bold shadow-lg shadow-purple-300 ring-4 ring-white">1</div>
+        <span class="text-xs font-bold text-slate-700 mt-2">Create</span>
       </div>
+      <div id="conn-1" class="step-connector"></div>
+      <div class="flex flex-col items-center">
+        <div id="step-2" class="w-12 h-12 rounded-full bg-white text-slate-400 flex items-center justify-center font-bold shadow-md ring-2 ring-slate-200 transition-all">2</div>
+        <span class="text-xs font-bold text-slate-500 mt-2">Generate</span>
+      </div>
+      <div id="conn-2" class="step-connector"></div>
+      <div class="flex flex-col items-center">
+        <div id="step-3" class="w-12 h-12 rounded-full bg-white text-slate-400 flex items-center justify-center font-bold shadow-md ring-2 ring-slate-200 transition-all">3</div>
+        <span class="text-xs font-bold text-slate-500 mt-2">Learn</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Card -->
+  <div class="glass rounded-3xl p-6 sm:p-10 shadow-2xl shadow-purple-200/50 mb-8 animate-fade-up" style="animation-delay: 0.2s">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-300">✨</div>
       <div>
-        <div style="font-weight:700; margin-bottom:10px; color:var(--text); font-size:14px;">🎯 Number of Quizzes</div>
-        <div class="field" style="margin-bottom:0;">
-          <span class="field-icon">❓</span>
-          <select id="numQuizzes">
-            <option value="3">3 Questions 🌱</option>
-            <option value="5" selected>5 Questions 🌸</option>
-            <option value="8">8 Questions 🌻</option>
-            <option value="10">10 Questions 🌼</option>
-          </select>
-        </div>
+        <h2 class="font-display font-bold text-2xl text-slate-800">Create Your Lesson</h2>
+        <p class="text-sm text-slate-500 font-semibold">Paste notes · pick a language · hit generate</p>
       </div>
     </div>
 
-    <div style="margin-top: 26px; text-align: center;">
-      <button class="btn-primary" id="generateBtn" onclick="generate()">
-        ✨ Generate AI Lesson
+    <div class="space-y-5">
+      <!-- Title -->
+      <div class="float-input">
+        <span class="icon">📘</span>
+        <input id="title" type="text" value="Photosynthesis" placeholder=" " />
+        <label for="title">Lesson Title</label>
+      </div>
+
+      <!-- Notes -->
+      <div class="float-input textarea">
+        <span class="icon">📝</span>
+        <textarea id="notes" placeholder=" ">Photosynthesis is the process by which green plants use sunlight, water, and carbon dioxide to produce glucose and oxygen. It occurs in chloroplasts and involves chlorophyll, which captures light energy. The light-dependent reactions occur in the thylakoid membranes, while the Calvin cycle takes place in the stroma.</textarea>
+        <label for="notes">Your Study Notes</label>
+      </div>
+
+      <!-- Row: Language + Quiz count -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-3 ml-1 uppercase tracking-wider">🌍 Output Language</label>
+          <div class="flex flex-wrap gap-2" id="langChips">
+            <div class="chip-toggle active" data-lang="en">🇬🇧 English</div>
+            <div class="chip-toggle" data-lang="hi">🇮🇳 हिंदी</div>
+            <div class="chip-toggle" data-lang="hinglish">🌟 Hinglish</div>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-3 ml-1 uppercase tracking-wider">🎯 Quiz Count</label>
+          <div class="flex flex-wrap gap-2" id="quizChips">
+            <div class="chip-toggle" data-q="3">3</div>
+            <div class="chip-toggle active" data-q="5">5</div>
+            <div class="chip-toggle" data-q="8">8</div>
+            <div class="chip-toggle" data-q="10">10</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <button id="generateBtn" onclick="generate()"
+        class="cta-button w-full text-white font-bold text-lg py-5 px-8 rounded-2xl font-display tracking-wide relative overflow-hidden mt-3">
+        <span id="btnText" class="relative z-10 flex items-center justify-center gap-3">
+          <span>✨</span>
+          <span>Generate AI Lesson</span>
+          <span>→</span>
+        </span>
       </button>
     </div>
   </div>
 
+  <!-- Output area -->
   <div id="output"></div>
-</div>
 
-<footer>
-  Made with 💖 using FastAPI + AI · <a href="http://localhost:8000/docs" target="_blank">API Docs</a>
-</footer>
+  <!-- Footer -->
+  <footer class="text-center py-8 text-sm text-slate-500 font-semibold">
+    Made with 💜 · <a href="http://localhost:8000/docs" target="_blank" class="text-purple-600 hover:text-purple-800 underline">API Docs</a>
+  </footer>
+</div>
 
 <script>
 const API = "http://localhost:8000/api";
 const out = document.getElementById("output");
 const btn = document.getElementById("generateBtn");
+const btnText = document.getElementById("btnText");
 
 let selectedLang = "en";
+let selectedQuizCount = 5;
 let currentResult = null;
 let quizState = {};
-const scenePlayers = {};
 
-document.querySelectorAll("#langChips .chip").forEach(chip => {
-  chip.addEventListener("click", () => {
-    document.querySelectorAll("#langChips .chip").forEach(c => c.classList.remove("active"));
-    chip.classList.add("active");
-    selectedLang = chip.dataset.lang;
-    if (currentResult) renderResults();
-  });
-});
-
-function setStep(n) {
-  [1,2,3].forEach(i => {
-    const el = document.getElementById("sstep-" + i);
-    if (i <= n) el.classList.add("active");
-    else el.classList.remove("active");
+// ---------- Chip handlers ----------
+function bindChipGroup(selector, onSelect) {
+  document.querySelectorAll(selector).forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll(selector).forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      onSelect(chip);
+    });
   });
 }
+bindChipGroup("#langChips .chip-toggle", c => {
+  selectedLang = c.dataset.lang;
+  if (currentResult) renderResults();
+});
+bindChipGroup("#quizChips .chip-toggle", c => {
+  selectedQuizCount = parseInt(c.dataset.q);
+});
 
+// ---------- Step Indicator ----------
+function setStep(stage) {
+  // stage: 1 (idle), 2 (generating), 3 (done)
+  const s1 = document.getElementById("step-1");
+  const s2 = document.getElementById("step-2");
+  const s3 = document.getElementById("step-3");
+  const c1 = document.getElementById("conn-1");
+  const c2 = document.getElementById("conn-2");
+
+  [s1,s2,s3].forEach(el => {
+    el.classList.remove("bg-gradient-to-br","from-pink-500","via-purple-500","to-blue-500","text-white","shadow-lg","shadow-purple-300","ring-4","ring-white");
+    el.classList.add("bg-white","text-slate-400","ring-2","ring-slate-200","shadow-md");
+  });
+  [c1,c2].forEach(el => el.classList.remove("active"));
+
+  const activate = (el) => {
+    el.classList.remove("bg-white","text-slate-400","ring-2","ring-slate-200","shadow-md");
+    el.classList.add("bg-gradient-to-br","from-pink-500","via-purple-500","to-blue-500","text-white","shadow-lg","shadow-purple-300","ring-4","ring-white");
+  };
+
+  if (stage >= 1) activate(s1);
+  if (stage >= 2) { c1.classList.add("active"); activate(s2); }
+  if (stage >= 3) { c2.classList.add("active"); activate(s3); }
+}
+
+// ---------- Generate Flow ----------
 async function generate() {
   btn.disabled = true;
-  btn.innerHTML = '<div class="dots"><span></span><span></span><span></span></div> Generating magic...';
+  btnText.innerHTML = `<div class="dot-loader"><span></span><span></span><span></span></div> <span>Generating...</span>`;
   out.innerHTML = "";
   quizState = {};
   setStep(2);
+  renderSkeletonLoader();
 
   try {
-    setStatus("⏳ Uploading your notes...");
-
+    updateLoadingMsg("📤 Uploading your notes...");
     const upload = await fetch(`${API}/upload-notes`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
@@ -566,34 +549,32 @@ async function generate() {
     if (!upload.ok) throw new Error("Upload failed");
     const uploadJson = await upload.json();
 
-    setStatus("🧠 AI is working its magic...");
-
+    updateLoadingMsg("🧠 AI is analyzing your notes...");
     const gen = await fetch(`${API}/generate-content`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
         note_id: uploadJson.note_id,
-        num_quizzes: parseInt(document.getElementById("numQuizzes").value),
+        num_quizzes: selectedQuizCount,
         languages: ["en", "hi", "hinglish"]
       })
     });
     if (!gen.ok) throw new Error("Generation failed");
     const genJson = await gen.json();
 
-    const stages = [
-      "📚 Extracting cute concepts...",
-      "🎬 Designing animated scenes...",
-      "❓ Crafting fun quizzes...",
-      "🌈 Translating to your languages...",
-      "✨ Adding final sparkles..."
-    ];
-
     let result;
+    const stages = [
+      "📚 Extracting key concepts...",
+      "🎬 Designing animated scenes...",
+      "❓ Crafting interactive quizzes...",
+      "🌐 Translating to multiple languages...",
+      "✅ Validating lesson quality..."
+    ];
     for (let i = 0; i < 40; i++) {
       await new Promise(r => setTimeout(r, 1500));
       const r2 = await fetch(`${API}/results/${genJson.generated_content_id}`);
       result = await r2.json();
-      setStatus(stages[Math.min(i, stages.length - 1)]);
+      updateLoadingMsg(stages[Math.min(i, stages.length - 1)]);
       if (result.status === "completed" || result.status === "failed") break;
     }
 
@@ -602,110 +583,269 @@ async function generate() {
       setStep(3);
       renderResults();
     } else {
-      setStatus("😢 " + (result.error_message || "Something went wrong"), "failed");
+      setStep(1);
+      renderError(result.error_message || "Unknown error");
     }
   } catch (e) {
-    setStatus("😢 " + e.message, "failed");
+    setStep(1);
+    renderError(e.message);
   } finally {
     btn.disabled = false;
-    btn.innerHTML = "✨ Generate AI Lesson";
+    btnText.innerHTML = `<span>✨</span><span>Generate AI Lesson</span><span>→</span>`;
   }
 }
 
-function setStatus(msg, type = "") {
-  let s = document.getElementById("statusBar");
-  if (!s) {
-    s = document.createElement("div");
-    s.id = "statusBar"; s.className = "card";
-    out.innerHTML = "";
-    out.appendChild(s);
-  }
-  const dots = !type ? '<div class="dots"><span></span><span></span><span></span></div>' : (type === "completed" ? "✅" : "💔");
-  s.innerHTML = `<div class="status ${type}">${dots}<span>${msg}</span></div>`;
-}
-
-function renderResults() {
-  const r = currentResult;
-  if (!r) return;
-
-  const bundle = (r.translations || []).find(t => t.language === selectedLang);
-  const concepts = bundle?.concepts || r.concepts || [];
-  const quizzes = bundle?.quizzes || r.quizzes || [];
-  const scenes = r.scene_plan || [];
-
-  const langLabel = {en: "English 🇬🇧", hi: "हिंदी 🇮🇳", hinglish: "Hinglish 🌟"}[selectedLang];
-
+// ---------- Skeleton loader ----------
+function renderSkeletonLoader() {
   out.innerHTML = `
-    <div class="card">
-      <div class="status completed">✅ <span>Your lesson is ready! Currently in <b>${langLabel}</b></span></div>
-
-      <div class="stats-row">
-        <div class="stat"><div class="stat-icon">📚</div><div class="stat-value">${concepts.length}</div><div class="stat-label">Concepts</div></div>
-        <div class="stat"><div class="stat-icon">🎬</div><div class="stat-value">${scenes.length}</div><div class="stat-label">Scenes</div></div>
-        <div class="stat"><div class="stat-icon">❓</div><div class="stat-value">${quizzes.length}</div><div class="stat-label">Quizzes</div></div>
-        <div class="stat"><div class="stat-icon">⭐</div><div class="stat-value">${Math.round((r.validation_report?.score||0)*100)}%</div><div class="stat-label">Quality</div></div>
+    <div class="glass rounded-3xl p-8 shadow-2xl shadow-purple-200/50 animate-scale-in">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 animate-pulse-slow flex items-center justify-center text-white">
+          <div class="dot-loader"><span></span><span></span><span></span></div>
+        </div>
+        <div class="flex-1">
+          <div id="loadingMsg" class="font-bold text-slate-700">Starting up the AI...</div>
+          <div class="text-xs text-slate-500 font-semibold mt-1">This usually takes 10–20 seconds</div>
+        </div>
       </div>
-
-      <div class="tabs">
-        <div class="tab active" data-tab="concepts">📚 Concepts</div>
-        <div class="tab" data-tab="scenes">🎬 Scenes</div>
-        <div class="tab" data-tab="quizzes">❓ Quiz</div>
+      <div class="space-y-3">
+        <div class="skeleton h-4 rounded-lg w-3/4"></div>
+        <div class="skeleton h-4 rounded-lg w-full"></div>
+        <div class="skeleton h-4 rounded-lg w-5/6"></div>
+        <div class="grid grid-cols-3 gap-3 mt-6">
+          <div class="skeleton h-24 rounded-2xl"></div>
+          <div class="skeleton h-24 rounded-2xl"></div>
+          <div class="skeleton h-24 rounded-2xl"></div>
+        </div>
       </div>
-
-      <div class="tab-panel active" id="tab-concepts">${renderConcepts(concepts)}</div>
-      <div class="tab-panel" id="tab-scenes">${renderScenes(scenes)}</div>
-      <div class="tab-panel" id="tab-quizzes">${renderQuizzes(quizzes)}</div>
     </div>
   `;
+}
+function updateLoadingMsg(msg) {
+  const el = document.getElementById("loadingMsg");
+  if (el) el.textContent = msg;
+}
 
-  document.querySelectorAll(".tab").forEach(t => {
+function renderError(msg) {
+  out.innerHTML = `
+    <div class="glass rounded-3xl p-8 shadow-xl border-2 border-red-200 animate-scale-in">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-2xl">⚠️</div>
+        <div>
+          <div class="font-bold text-red-600">Generation Failed</div>
+          <div class="text-sm text-slate-600 mt-1">${msg}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ---------- Main Render ----------
+function renderResults() {
+  const r = currentResult;
+  const bundle = (r.translations || []).find(t => t.language === selectedLang);
+  const concepts = bundle?.concepts || r.concepts || [];
+  const quizzes  = bundle?.quizzes  || r.quizzes  || [];
+  const scenes   = r.scene_plan || [];
+
+  const langLabel = {en: "English", hi: "हिंदी", hinglish: "Hinglish"}[selectedLang];
+  const qualityScore = Math.round((r.validation_report?.score || 0) * 100);
+
+  out.innerHTML = `
+    <!-- Success Banner -->
+    <div class="glass rounded-3xl p-6 shadow-xl mb-6 animate-fade-up border border-green-200/50">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-white text-2xl shadow-lg shadow-green-200">✓</div>
+          <div>
+            <div class="font-display font-bold text-lg text-slate-800">Lesson Ready!</div>
+            <div class="text-sm text-slate-600 font-semibold">Viewing in <b class="text-purple-600">${langLabel}</b> · Switch language anytime above ↑</div>
+          </div>
+        </div>
+        <div class="px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-bold text-sm">
+          🎯 Quality: ${qualityScore}%
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 animate-fade-up" style="animation-delay: 0.1s">
+      ${statCard("stat-pink",   "stat-icon-pink",   "📚", concepts.length, "Concepts")}
+      ${statCard("stat-purple", "stat-icon-purple", "🎬", scenes.length,   "Scenes")}
+      ${statCard("stat-blue",   "stat-icon-blue",   "❓", quizzes.length,  "Quizzes")}
+      ${statCard("stat-cyan",   "stat-icon-cyan",   "⚡", qualityScore+"%", "Quality")}
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="glass rounded-full p-1.5 shadow-lg mb-6 flex gap-1 animate-fade-up" style="animation-delay: 0.15s">
+      ${tabBtn("concepts", "📚 Concepts", true)}
+      ${tabBtn("scenes",   "🎬 Scenes",   false)}
+      ${tabBtn("quizzes",  "🎯 Quiz Time", false)}
+    </div>
+
+    <!-- Tab Panels -->
+    <div id="tab-concepts" class="tab-panel animate-fade-up">${renderConcepts(concepts)}</div>
+    <div id="tab-scenes"   class="tab-panel hidden">${renderScenes(scenes)}</div>
+    <div id="tab-quizzes"  class="tab-panel hidden">${renderQuizzes(quizzes)}</div>
+  `;
+
+  // Tabs
+  document.querySelectorAll("[data-tab]").forEach(t => {
     t.addEventListener("click", () => {
-      document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
-      document.querySelectorAll(".tab-panel").forEach(x => x.classList.remove("active"));
-      t.classList.add("active");
-      document.getElementById("tab-" + t.dataset.tab).classList.add("active");
+      document.querySelectorAll("[data-tab]").forEach(x => {
+        x.classList.remove("bg-gradient-to-r","from-pink-500","via-purple-500","to-blue-500","text-white","shadow-lg");
+        x.classList.add("text-slate-600");
+      });
+      t.classList.add("bg-gradient-to-r","from-pink-500","via-purple-500","to-blue-500","text-white","shadow-lg");
+      t.classList.remove("text-slate-600");
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.add("hidden"));
+      const panel = document.getElementById("tab-" + t.dataset.tab);
+      panel.classList.remove("hidden");
+      panel.classList.remove("animate-fade-up");
+      void panel.offsetWidth;
+      panel.classList.add("animate-fade-up");
     });
   });
 
-  scenes.forEach((s, i) => scenePlayers[i] = { scene: s, current: -1, playing: false, timer: null });
-  quizzes.forEach((q, i) => quizState[i] = { answered: false, correct: q.correct_index, explanation: q.explanation });
+  // Init scenes
+  scenes.forEach((s, i) => initScenePlayer(i, s));
+  // Init quizzes
+  quizzes.forEach((q, i) => { quizState[i] = { answered: false, correct: q.correct_index, explanation: q.explanation }; });
+}
+
+// ---------- Components ----------
+function statCard(bg, icon, emoji, value, label) {
+  return `
+    <div class="rounded-2xl ${bg} p-5 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 cursor-default group">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl ${icon} flex items-center justify-center text-2xl shadow-md group-hover:scale-110 transition-transform">${emoji}</div>
+        <div>
+          <div class="text-3xl font-display font-black text-slate-800">${value}</div>
+          <div class="text-xs font-bold text-slate-600 uppercase tracking-wider">${label}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function tabBtn(key, label, active) {
+  const activeCls = active
+    ? "bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white shadow-lg"
+    : "text-slate-600";
+  return `<button data-tab="${key}" class="flex-1 py-2.5 px-4 rounded-full font-bold text-sm transition-all ${activeCls}">${label}</button>`;
 }
 
 function renderConcepts(concepts) {
-  if (!concepts.length) return `<div class="empty"><div class="empty-icon">🌱</div>No concepts yet</div>`;
-  return concepts.map(c => `
-    <div class="concept">
-      <div class="concept-head">
-        <div class="concept-title">✨ ${c.title}</div>
-        <span class="diff diff-${c.difficulty || 'medium'}">${c.difficulty || 'medium'}</span>
+  if (!concepts.length) return emptyState("No concepts found", "🔍");
+  return `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">` + concepts.map((c, i) => `
+    <div class="bg-white rounded-3xl p-6 shadow-md hover:shadow-2xl hover:shadow-purple-200/50 transition-all hover:-translate-y-1 border border-white animate-fade-up" style="animation-delay: ${i*0.05}s">
+      <div class="flex items-start justify-between gap-3 mb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm shadow-md">C${i+1}</div>
+          <h3 class="font-display font-bold text-lg text-slate-800">${c.title || ''}</h3>
+        </div>
+        <span class="diff-${c.difficulty || 'medium'} px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">${c.difficulty || 'medium'}</span>
       </div>
-      <div class="concept-summary">${c.summary || ''}</div>
-      <div class="kw-row">${(c.keywords || []).map(k => `<span class="kw">#${k}</span>`).join("")}</div>
+      <p class="text-slate-600 leading-relaxed mb-4">${c.summary || ''}</p>
+      <div class="flex flex-wrap gap-2">
+        ${(c.keywords || []).map(k => `<span class="px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold border border-purple-100">#${k}</span>`).join("")}
+      </div>
     </div>
-  `).join("");
+  `).join("") + `</div>`;
+}
+
+function normalizeImageQuery(text) {
+  return (text || "learning topic")
+    .replace(/[^a-zA-Z0-9\s-]/g, " ")
+    .trim()
+    .split(/\s+/)
+    .slice(0, 10)
+    .join(" ");
+}
+
+function hashCode(text) {
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = ((hash << 5) - hash) + text.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function sceneImageUrl(scene, step) {
+  const base = normalizeImageQuery(`${scene?.title || "education"} ${step?.narration || ""}`);
+  const sig = hashCode(`${scene?.scene_id || scene?.title || "scene"}-${step?.step_id || 0}`) % 1000;
+  return `https://source.unsplash.com/1600x900/?${encodeURIComponent(base)}&sig=${sig}`;
+}
+
+function updateSceneImage(idx, scene, step) {
+  const img = document.getElementById(`scene-img-${idx}`);
+  if (!img) return;
+  const next = sceneImageUrl(scene, step);
+  if (img.dataset.src === next) return;
+  img.dataset.src = next;
+  img.classList.remove("hidden-image");
+  img.src = next;
+}
+
+function handleSceneImageError(idx) {
+  const img = document.getElementById(`scene-img-${idx}`);
+  if (!img) return;
+  img.classList.add("hidden-image");
 }
 
 function renderScenes(scenes) {
-  if (!scenes.length) return `<div class="empty"><div class="empty-icon">🎬</div>No scenes yet</div>`;
-  return scenes.map((s, i) => `
-    <div class="scene-card">
-      <div class="scene-head">🎬 Scene ${i+1}: ${s.title}</div>
-      <div class="scene-stage">
-        <div class="scene-visual" id="visual-${i}">🎞️</div>
-        <div class="scene-narration" id="narration-${i}">Press play to start the animation ▶</div>
+  if (!scenes.length) return emptyState("No scenes generated", "🎬");
+  return `<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">` + scenes.map((s, i) => `
+    <div class="scene-video animate-fade-up" style="animation-delay: ${i*0.08}s">
+      <img id="scene-img-${i}" class="scene-topic-image" src="${sceneImageUrl(s)}" alt="Scene topic image" loading="lazy" referrerpolicy="no-referrer" onerror="handleSceneImageError(${i})" />
+      <div class="scene-image-overlay"></div>
+
+      <!-- Top bar -->
+      <div class="flex items-center justify-between px-5 pt-4 text-white/90">
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 rounded-full bg-red-400 animate-pulse"></div>
+          <span class="text-xs font-bold uppercase tracking-widest">AI Generated · Scene ${i+1}</span>
+        </div>
+        <span class="text-xs font-bold bg-white/10 backdrop-blur-sm px-2 py-1 rounded-lg">${s.steps.length} steps</span>
       </div>
-      <div class="scene-controls">
-        <button class="play-btn" id="play-${i}" onclick="toggleScene(${i})">▶</button>
-        <div class="scene-progress"><div class="scene-progress-bar" id="progress-${i}"></div></div>
-        <div class="scene-step-info" id="step-info-${i}">0/${s.steps.length}</div>
+
+      <!-- Stage -->
+      <div class="px-6 py-10 min-h-[260px] flex flex-col items-center justify-center text-center text-white relative">
+        <div id="visual-${i}" class="text-7xl mb-4 transition-all duration-500 animate-bounce-slow drop-shadow-2xl">🎞️</div>
+        <div id="narration-${i}" class="text-lg font-semibold leading-relaxed max-w-md px-4 text-white/95">
+          ${s.title}
+        </div>
+        <div id="hint-${i}" class="text-xs mt-3 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm text-white/80 font-bold uppercase tracking-wider hidden"></div>
+      </div>
+
+      <!-- Controls -->
+      <div class="flex items-center gap-3 px-5 py-4 bg-black/20 backdrop-blur-sm">
+        <button id="play-${i}" onclick="toggleScene(${i})"
+          class="w-12 h-12 rounded-full bg-white text-purple-600 flex items-center justify-center shadow-lg hover:scale-110 transition-transform text-lg font-bold">▶</button>
+        <div class="flex-1">
+          <div class="text-xs font-bold text-white/80 mb-1" id="step-title-${i}">${s.title}</div>
+          <div class="h-2 bg-white/20 rounded-full overflow-hidden">
+            <div id="progress-${i}" class="h-full bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+        <div id="step-info-${i}" class="text-xs font-bold text-white/90 min-w-[40px] text-right">0/${s.steps.length}</div>
       </div>
     </div>
-  `).join("");
+  `).join("") + `</div>`;
+}
+
+// ---------- Scene Player ----------
+const scenePlayers = {};
+function initScenePlayer(idx, scene) {
+  scenePlayers[idx] = { scene, current: -1, playing: false, timer: null };
+  updateSceneImage(idx, scene, scene.steps?.[0]);
 }
 
 function toggleScene(idx) {
   const p = scenePlayers[idx];
-  if (p.playing) pauseScene(idx); else playScene(idx);
+  if (p.playing) pauseScene(idx);
+  else playScene(idx);
 }
 function playScene(idx) {
   const p = scenePlayers[idx];
@@ -729,50 +869,122 @@ function nextStep(idx) {
   const narration = document.getElementById(`narration-${idx}`);
   const progress = document.getElementById(`progress-${idx}`);
   const stepInfo = document.getElementById(`step-info-${idx}`);
-  const emojis = (step.visual.match(/\p{Emoji}/gu) || ["🎞️"]).join("");
-  visual.textContent = emojis;
-  visual.style.animation = "none";
-  setTimeout(() => visual.style.animation = "bounce 2s ease-in-out infinite", 10);
-  narration.textContent = step.narration;
+  const hint = document.getElementById(`hint-${idx}`);
+
+  const emojis = (step.visual?.match(/\p{Emoji}/gu) || ["🎞️"]).join("");
+  visual.style.transform = "scale(0.5)";
+  visual.style.opacity = "0";
+  setTimeout(() => {
+    visual.textContent = emojis;
+    visual.style.transform = "scale(1)";
+    visual.style.opacity = "1";
+  }, 200);
+
+  narration.style.opacity = "0";
+  setTimeout(() => {
+    narration.textContent = step.narration;
+    narration.style.opacity = "1";
+  }, 250);
+
+  if (step.animation_hint) {
+    hint.textContent = "✨ " + step.animation_hint;
+    hint.classList.remove("hidden");
+  }
+
+  updateSceneImage(idx, p.scene, step);
+
   progress.style.width = ((p.current + 1) / p.scene.steps.length * 100) + "%";
   stepInfo.textContent = `${p.current + 1}/${p.scene.steps.length}`;
+
   p.timer = setTimeout(() => { if (p.playing) nextStep(idx); }, (step.duration_sec || 4) * 1000);
 }
 
+// ---------- Quiz ----------
 function renderQuizzes(quizzes) {
-  if (!quizzes.length) return `<div class="empty"><div class="empty-icon">❓</div>No quizzes yet</div>`;
-  return quizzes.map((q, i) => `
-    <div class="quiz" id="quiz-${i}">
-      <div class="quiz-head">
-        <div class="quiz-q"><span class="q-badge">Q${i+1}</span> &nbsp; ${q.question}</div>
-        <span class="diff diff-${q.difficulty || 'medium'}">${q.difficulty || 'medium'}</span>
-      </div>
-      <div class="q-options">
-        ${(q.options || []).map((opt, j) => `
-          <div class="q-option" onclick="answerQuiz(${i}, ${j})">
-            <div class="q-letter">${String.fromCharCode(65+j)}</div>
-            <div>${opt}</div>
-          </div>
-        `).join("")}
-      </div>
-      <div id="explain-${i}"></div>
+  if (!quizzes.length) return emptyState("No quizzes generated", "❓");
+  return `
+    <div class="mb-4 text-center">
+      <p class="text-slate-600 font-semibold">Click an answer to see if you're right! 🎯</p>
     </div>
-  `).join("");
+    <div class="grid grid-cols-1 gap-5">
+    ${quizzes.map((q, i) => `
+      <div id="quiz-${i}" class="bg-white rounded-3xl p-6 shadow-md hover:shadow-xl transition-all border border-white animate-fade-up" style="animation-delay: ${i*0.05}s">
+        <div class="flex items-start justify-between gap-3 mb-5">
+          <div class="flex items-start gap-3 flex-1">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 text-white flex items-center justify-center font-display font-bold text-sm shadow-md flex-shrink-0">Q${i+1}</div>
+            <h3 class="font-display font-bold text-lg text-slate-800 mt-1">${q.question}</h3>
+          </div>
+          <span class="diff-${q.difficulty || 'medium'} px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide flex-shrink-0">${q.difficulty || 'medium'}</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          ${(q.options || []).map((opt, j) => `
+            <div class="quiz-opt cursor-pointer flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border-2 border-slate-100" data-q="${i}" data-opt="${j}" onclick="answerQuiz(${i}, ${j})">
+              <div class="w-9 h-9 rounded-xl bg-white border-2 border-slate-200 flex items-center justify-center font-display font-bold text-sm text-slate-600 flex-shrink-0">${String.fromCharCode(65+j)}</div>
+              <div class="font-semibold text-slate-700 text-sm">${opt}</div>
+            </div>
+          `).join("")}
+        </div>
+        <div id="explanation-${i}"></div>
+      </div>
+    `).join("")}
+    </div>
+  `;
 }
 
 function answerQuiz(qIdx, optIdx) {
-  const state = quizState[qIdx];
-  if (!state || state.answered) return;
-  state.answered = true;
-  const options = document.querySelectorAll(`#quiz-${qIdx} .q-option`);
-  options.forEach(o => o.classList.add("disabled"));
-  const correctIdx = state.correct;
-  options[optIdx].classList.add(optIdx === correctIdx ? "correct" : "wrong");
-  if (optIdx !== correctIdx) options[correctIdx].classList.add("correct");
+  const s = quizState[qIdx];
+  if (!s || s.answered) return;
+  s.answered = true;
+
+  const opts = document.querySelectorAll(`#quiz-${qIdx} .quiz-opt`);
+  opts.forEach(o => {
+    o.classList.add("disabled");
+    o.onclick = null;
+    o.classList.remove("cursor-pointer");
+  });
+
+  const correctIdx = s.correct;
+  const chosen = opts[optIdx];
+  const correct = opts[correctIdx];
+
+  if (optIdx === correctIdx) {
+    chosen.classList.remove("bg-slate-50","border-slate-100");
+    chosen.classList.add("bg-gradient-to-r","from-green-100","to-emerald-100","border-green-400");
+    chosen.querySelector(".w-9").classList.remove("bg-white","border-slate-200","text-slate-600");
+    chosen.querySelector(".w-9").classList.add("bg-green-500","border-green-500","text-white");
+    chosen.insertAdjacentHTML("beforeend", `<span class="ml-auto text-green-600 text-xl font-bold">✓</span>`);
+  } else {
+    chosen.classList.remove("bg-slate-50","border-slate-100");
+    chosen.classList.add("bg-gradient-to-r","from-red-100","to-pink-100","border-red-400");
+    chosen.querySelector(".w-9").classList.remove("bg-white","border-slate-200","text-slate-600");
+    chosen.querySelector(".w-9").classList.add("bg-red-500","border-red-500","text-white");
+    chosen.insertAdjacentHTML("beforeend", `<span class="ml-auto text-red-600 text-xl font-bold">✗</span>`);
+    correct.classList.remove("bg-slate-50","border-slate-100");
+    correct.classList.add("bg-gradient-to-r","from-green-100","to-emerald-100","border-green-400");
+    correct.querySelector(".w-9").classList.remove("bg-white","border-slate-200","text-slate-600");
+    correct.querySelector(".w-9").classList.add("bg-green-500","border-green-500","text-white");
+    correct.insertAdjacentHTML("beforeend", `<span class="ml-auto text-green-600 text-xl font-bold">✓</span>`);
+  }
+
   const isCorrect = optIdx === correctIdx;
-  document.getElementById(`explain-${qIdx}`).innerHTML = `
-    <div class="q-explain">
-      <b>${isCorrect ? "🎉 Yay, correct!" : "💡 Almost there!"}</b> ${state.explanation || ""}
+  document.getElementById(`explanation-${qIdx}`).innerHTML = `
+    <div class="mt-4 p-4 rounded-2xl ${isCorrect ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-400' : 'bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-400'} animate-scale-in">
+      <div class="flex items-start gap-3">
+        <div class="text-2xl">${isCorrect ? '🎉' : '💡'}</div>
+        <div>
+          <div class="font-display font-bold ${isCorrect ? 'text-green-700' : 'text-amber-700'} mb-1">${isCorrect ? 'Correct! Great job!' : "Not quite - here's the explanation:"}</div>
+          <div class="text-sm text-slate-700 leading-relaxed">${s.explanation || ''}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function emptyState(msg, icon) {
+  return `
+    <div class="glass rounded-3xl p-12 text-center">
+      <div class="text-6xl mb-4 opacity-40">${icon}</div>
+      <div class="text-slate-500 font-bold">${msg}</div>
     </div>
   `;
 }
