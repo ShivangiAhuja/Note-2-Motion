@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Note2Motion — AI Learning Studio 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --lavender: #c7b9ff;
+  --pink: #ffc6e3;
+  --sky: #b8e3ff;
+  --mint: #c8f5d8;
+  --peach: #ffd9b8;
+  --purple: #a78bfa;
+  --pink-dark: #f472b6;
+  --blue-dark: #60a5fa;
+  --mint-dark: #6ee7b7;
+  --text: #4a4458;
+  --text-soft: #7a7390;
+  --white: #fefcff;
+  --card: rgba(255, 255, 255, 0.75);
+  --shadow-soft: 0 20px 50px -20px rgba(167, 139, 250, 0.25);
+  --shadow-glow: 0 0 40px rgba(236, 153, 216, 0.3);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    linear-gradient(135deg, #fce7ff 0%, #e0e7ff 35%, #ddf4ff 70%, #d1fae5 100%);
+  background-size: 200% 200%;
+  animation: bgShift 18s ease-in-out infinite;
+}
+
+@keyframes bgShift {
+  0%, 100% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+}
+
+/* Floating pastel blobs */
+.blob {
+  position: fixed; border-radius: 50%;
+  filter: blur(80px); opacity: 0.5; z-index: 0;
+  pointer-events: none;
+}
+.blob-1 { width: 400px; height: 400px; background: #ffc6e3; top: -100px; left: -100px; animation: floatA 20s ease-in-out infinite; }
+.blob-2 { width: 350px; height: 350px; background: #c7b9ff; top: 40%; right: -120px; animation: floatB 25s ease-in-out infinite; }
+.blob-3 { width: 300px; height: 300px; background: #b8e3ff; bottom: -100px; left: 30%; animation: floatC 22s ease-in-out infinite; }
+
+@keyframes floatA { 0%,100% { transform: translate(0,0); } 50% { transform: translate(50px,80px); } }
+@keyframes floatB { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-80px,60px); } }
+@keyframes floatC { 0%,100% { transform: translate(0,0); } 50% { transform: translate(60px,-50px); } }
+
+/* Sparkles */
+.sparkle {
+  position: fixed; pointer-events: none; z-index: 1;
+  color: #ffe4f0; font-size: 20px;
+  animation: twinkle 3s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+.wrap {
+  position: relative; z-index: 2;
+  max-width: 1050px; margin: 0 auto; padding: 40px 20px;
+}
+
+/* Header */
+header { text-align: center; margin-bottom: 36px; }
+
+.logo {
+  display: inline-flex; align-items: center; gap: 14px;
+  font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3.2rem;
+  background: linear-gradient(135deg, #ec4899 0%, #a855f7 50%, #3b82f6 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: -1px;
+}
+.logo-icon {
+  width: 64px; height: 64px;
+  background: linear-gradient(135deg, var(--pink) 0%, var(--lavender) 50%, var(--sky) 100%);
+  border-radius: 22px; display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  box-shadow: 0 10px 30px rgba(167,139,250,0.35), inset 0 -4px 10px rgba(255,255,255,0.6);
+  animation: wobble 4s ease-in-out infinite;
+}
+@keyframes wobble {
+  0%,100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+.tagline {
+  font-size: 1.15rem; color: var(--text-soft);
+  max-width: 560px; margin: 14px auto 0;
+  line-height: 1.6; font-weight: 500;
+}
+
+/* Progress steps */
+.steps {
+  display: flex; justify-content: center; align-items: center;
+  gap: 8px; margin: 28px auto; flex-wrap: wrap;
+}
+.step {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-radius: 999px;
+  background: rgba(255,255,255,0.6); backdrop-filter: blur(10px);
+  font-weight: 700; font-size: 13px; color: var(--text-soft);
+  border: 1px solid rgba(255,255,255,0.8);
+  transition: all 0.3s;
+}
+.step.active {
+  background: linear-gradient(135deg, var(--pink), var(--lavender));
+  color: white;
+  box-shadow: 0 6px 20px rgba(236,153,216,0.4);
+  transform: scale(1.05);
+}
+.step-dot { font-size: 16px; }
+.step-arrow { color: rgba(167,139,250,0.4); font-size: 18px; }
+
+/* Card */
+.card {
+  background: var(--card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 28px;
+  padding: 36px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-soft);
+  animation: cardIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.card-title {
+  font-family: 'Poppins', sans-serif; font-size: 1.5rem; font-weight: 700;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #ec4899, #a855f7);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  display: flex; align-items: center; gap: 10px;
+}
+
+/* Floating-label inputs */
+.field { position: relative; margin-bottom: 20px; }
+.field input, .field textarea, .field select {
+  width: 100%; padding: 18px 18px 18px 48px;
+  border: 2px solid rgba(199,185,255,0.35);
+  border-radius: 16px;
+  font-size: 15px; font-family: inherit; font-weight: 500;
+  background: rgba(255,255,255,0.7); color: var(--text);
+  transition: all 0.25s; outline: none;
+}
+.field textarea { min-height: 150px; resize: vertical; line-height: 1.6; padding-top: 22px; }
+.field select { appearance: none; cursor: pointer; padding-right: 40px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a78bfa' viewBox='0 0 16 16'%3E%3Cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
+.field input:focus, .field textarea:focus, .field select:focus {
+  border-color: var(--purple);
+  background: white;
+  box-shadow: 0 0 0 5px rgba(167,139,250,0.15), 0 8px 20px rgba(167,139,250,0.12);
+}
+.field-icon {
+  position: absolute; left: 18px; top: 18px; font-size: 18px;
+  pointer-events: none;
+}
+.field textarea ~ .field-icon { top: 22px; }
+.field-label {
+  position: absolute; left: 48px; top: 50%; transform: translateY(-50%);
+  color: var(--text-soft); font-weight: 600; font-size: 15px;
+  pointer-events: none; transition: all 0.2s; background: transparent;
+  padding: 0 4px;
+}
+.field input:focus ~ .field-label,
+.field input:not(:placeholder-shown) ~ .field-label,
+.field textarea:focus ~ .field-label,
+.field textarea:not(:placeholder-shown) ~ .field-label {
+  top: 0; left: 40px; font-size: 12px;
+  color: var(--purple);
+  background: white; padding: 0 8px;
+}
+.field textarea ~ .field-label { top: 22px; transform: none; }
+.field textarea:focus ~ .field-label,
+.field textarea:not(:placeholder-shown) ~ .field-label { top: -8px; transform: none; }
+
+/* Grid */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* Language chips */
+.chip-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip {
+  padding: 12px 20px; border-radius: 999px; cursor: pointer;
+  background: rgba(255,255,255,0.7);
+  border: 2px solid rgba(199,185,255,0.35);
+  font-weight: 700; font-size: 14px; color: var(--text-soft);
+  transition: all 0.25s; user-select: none;
+  display: flex; align-items: center; gap: 6px;
+}
+.chip:hover {
+  border-color: var(--purple); color: var(--purple);
+  transform: translateY(-2px);
+}
+.chip.active {
+  background: linear-gradient(135deg, var(--pink) 0%, var(--lavender) 50%, var(--sky) 100%);
+  color: white; border-color: transparent;
+  box-shadow: 0 8px 22px rgba(236,153,216,0.45);
+  transform: translateY(-2px);
+}
+
+/* Button */
+.btn-primary {
+  background: linear-gradient(135deg, #f472b6 0%, #a855f7 50%, #60a5fa 100%);
+  background-size: 200% 100%;
+  color: white; border: none; padding: 18px 36px;
+  border-radius: 999px; font-size: 16px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 10px;
+  box-shadow: 0 12px 30px rgba(168,85,247,0.35);
+  transition: all 0.3s; position: relative; overflow: hidden;
+}
+.btn-primary:hover {
+  background-position: 100% 0%;
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(168,85,247,0.5);
+}
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.btn-primary::after {
+  content: ''; position: absolute; top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: 0.5s;
+}
+.btn-primary:hover::after { left: 100%; }
+
+/* Loading dots */
+.dots { display: inline-flex; gap: 4px; }
+.dots span {
+  width: 8px; height: 8px; background: white; border-radius: 50%;
+  animation: bounce-dot 1.4s ease-in-out infinite;
+}
+.dots span:nth-child(2) { animation-delay: 0.15s; }
+.dots span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes bounce-dot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.6; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* Status bar */
+.status {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 22px; border-radius: 18px; font-weight: 600;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, rgba(255,198,227,0.4), rgba(199,185,255,0.4));
+  border: 1px solid rgba(255,255,255,0.6);
+}
+.status.completed { background: linear-gradient(135deg, rgba(200,245,216,0.6), rgba(184,227,255,0.5)); color: #065f46; }
+.status.failed { background: linear-gradient(135deg, rgba(255,198,198,0.5), rgba(255,217,184,0.4)); color: #991b1b; }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 28px; }
+@media (max-width: 640px) { .stats-row { grid-template-columns: 1fr 1fr; } }
+.stat {
+  background: rgba(255,255,255,0.8);
+  border-radius: 18px; padding: 18px; text-align: center;
+  border: 1px solid rgba(255,255,255,0.8);
+  transition: transform 0.2s;
+}
+.stat:hover { transform: translateY(-4px); }
+.stat-icon { font-size: 26px; margin-bottom: 6px; }
+.stat-value { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #ec4899, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
+.stat-label { font-size: 11px; color: var(--text-soft); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 4px; }
+
+/* Tabs */
+.tabs {
+  display: flex; gap: 6px; padding: 6px;
+  background: rgba(255,255,255,0.7); border-radius: 18px; margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+.tab {
+  flex: 1; padding: 12px 16px; border-radius: 14px;
+  cursor: pointer; text-align: center; font-weight: 700;
+  color: var(--text-soft); transition: all 0.25s; font-size: 14px;
+  min-width: 100px;
+}
+.tab.active {
+  background: linear-gradient(135deg, var(--pink), var(--lavender));
+  color: white;
+  box-shadow: 0 6px 16px rgba(236,153,216,0.35);
+}
+.tab-panel { display: none; animation: fadeIn 0.4s; }
+.tab-panel.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Concept card */
+.concept {
+  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(253,242,255,0.6));
+  border: 1px solid rgba(255,255,255,0.8);
+  border-left: 5px solid var(--purple);
+  border-radius: 18px; padding: 22px; margin-bottom: 14px;
+  transition: transform 0.2s;
+}
+.concept:hover { transform: translateX(6px); }
+.concept-head { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.concept-title { font-weight: 800; font-size: 1.1rem; font-family: 'Poppins', sans-serif; color: var(--text); }
+.concept-summary { color: var(--text-soft); line-height: 1.65; margin-bottom: 12px; font-weight: 500; }
+.kw-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.kw {
+  background: linear-gradient(135deg, rgba(199,185,255,0.35), rgba(255,198,227,0.3));
+  color: var(--purple); padding: 5px 12px; border-radius: 999px;
+  font-size: 12px; font-weight: 700;
+}
+.diff {
+  padding: 4px 12px; border-radius: 999px;
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.diff-easy { background: #c8f5d8; color: #065f46; }
+.diff-medium { background: #ffe4b8; color: #92400e; }
+.diff-hard { background: #ffc6c6; color: #991b1b; }
+
+/* Scenes */
+.scene-card {
+  background: linear-gradient(135deg, #fce7ff 0%, #ddf4ff 100%);
+  border-radius: 24px; padding: 24px; margin-bottom: 18px;
+  border: 1px solid rgba(255,255,255,0.8);
+}
+.scene-head {
+  font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: 700;
+  color: var(--text); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.scene-stage {
+  background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
+  border-radius: 20px; padding: 40px 24px; min-height: 260px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; border: 2px dashed rgba(167,139,250,0.3);
+  box-shadow: inset 0 4px 12px rgba(167,139,250,0.08);
+}
+.scene-visual {
+  font-size: 5rem; margin-bottom: 18px;
+  animation: bounce 2s ease-in-out infinite;
+  filter: drop-shadow(0 6px 12px rgba(167,139,250,0.3));
+}
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-18px); } }
+.scene-narration {
+  font-size: 1.1rem; line-height: 1.6; max-width: 500px;
+  color: var(--text); font-weight: 600;
+}
+.scene-controls {
+  display: flex; align-items: center; gap: 12px; margin-top: 18px;
+}
+.play-btn {
+  width: 52px; height: 52px; border-radius: 50%; border: none;
+  background: linear-gradient(135deg, #f472b6, #a855f7);
+  color: white; cursor: pointer; font-size: 20px;
+  box-shadow: 0 8px 18px rgba(168,85,247,0.35);
+  transition: transform 0.2s; display: flex; align-items: center; justify-content: center;
+}
+.play-btn:hover { transform: scale(1.08); }
+.scene-progress { flex: 1; height: 8px; background: rgba(199,185,255,0.3); border-radius: 4px; overflow: hidden; }
+.scene-progress-bar { height: 100%; background: linear-gradient(90deg, var(--pink-dark), var(--purple)); width: 0%; transition: width 0.3s; border-radius: 4px; }
+.scene-step-info { font-size: 13px; color: var(--text-soft); font-weight: 700; min-width: 50px; text-align: right; }
+
+/* Quiz */
+.quiz {
+  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(255,255,255,0.8);
+  border-radius: 20px; padding: 24px; margin-bottom: 16px;
+  transition: all 0.2s;
+}
+.quiz-head { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.quiz-q {
+  font-weight: 700; font-size: 1.05rem; color: var(--text);
+  flex: 1; line-height: 1.5;
+}
+.q-badge {
+  background: linear-gradient(135deg, var(--pink), var(--lavender));
+  color: white; padding: 6px 12px; border-radius: 10px;
+  font-size: 12px; font-weight: 800; letter-spacing: 0.5px;
+}
+.q-options { display: grid; gap: 10px; }
+.q-option {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px; border-radius: 14px;
+  background: rgba(255,255,255,0.6);
+  border: 2px solid rgba(199,185,255,0.35);
+  cursor: pointer; transition: all 0.2s; font-weight: 600;
+}
+.q-option:hover:not(.disabled) {
+  border-color: var(--purple);
+  background: white;
+  transform: translateX(6px);
+}
+.q-option.disabled { cursor: not-allowed; }
+.q-option.correct {
+  background: linear-gradient(135deg, #c8f5d8, #a7f3d0);
+  border-color: var(--mint-dark); color: #065f46;
+}
+.q-option.wrong {
+  background: linear-gradient(135deg, #ffd3d3, #fecaca);
+  border-color: #fca5a5; color: #991b1b;
+}
+.q-letter {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: white; border: 2px solid rgba(199,185,255,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 14px; color: var(--purple); flex-shrink: 0;
+}
+.q-option.correct .q-letter { background: var(--mint-dark); color: white; border-color: var(--mint-dark); }
+.q-option.wrong .q-letter { background: #fca5a5; color: white; border-color: #fca5a5; }
+.q-explain {
+  margin-top: 14px; padding: 16px;
+  background: linear-gradient(135deg, rgba(255,217,184,0.4), rgba(255,198,227,0.3));
+  border-radius: 14px; border-left: 4px solid var(--peach);
+  font-weight: 600; line-height: 1.5; font-size: 14px;
+  animation: fadeIn 0.4s;
+}
+
+/* Empty */
+.empty { text-align: center; padding: 60px 20px; color: var(--text-soft); }
+.empty-icon { font-size: 4rem; margin-bottom: 14px; opacity: 0.6; }
+
+/* Footer */
+footer {
+  text-align: center; padding: 30px; color: var(--text-soft);
+  font-size: 13px; font-weight: 600;
+}
+footer a { color: var(--purple); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- Background blobs -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<!-- Sparkles -->
+<div class="sparkle" style="top:15%; left:10%;">✨</div>
+<div class="sparkle" style="top:25%; right:15%; animation-delay:0.5s;">💫</div>
+<div class="sparkle" style="top:60%; left:8%; animation-delay:1s;">⭐</div>
+<div class="sparkle" style="bottom:20%; right:10%; animation-delay:1.5s;">✨</div>
+<div class="sparkle" style="top:40%; right:30%; animation-delay:2s;">🌟</div>
+
+<div class="wrap">
+
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🎀</div>
+      <span>Note2Motion</span>
+    </div>
+    <p class="tagline">Transform your study notes into cute AI-powered concepts, animated scenes, and interactive quizzes — in any language! 🌸</p>
+
+    <div class="steps">
+      <div class="step active" id="sstep-1"><span class="step-dot">📝</span> Write Notes</div>
+      <span class="step-arrow">→</span>
+      <div class="step" id="sstep-2"><span class="step-dot">🧠</span> AI Magic</div>
+      <span class="step-arrow">→</span>
+      <div class="step" id="sstep-3"><span class="step-dot">🎬</span> Learn & Play</div>
+    </div>
+  </header>
+
+  <!-- Input -->
+  <div class="card">
+    <h2 class="card-title">🌷 Create Your Lesson</h2>
+
+    <div class="field">
+      <span class="field-icon">📘</span>
+      <input id="title" type="text" placeholder=" " value="Photosynthesis" />
+      <label class="field-label" for="title">Lesson Title</label>
+    </div>
+
+    <div class="field">
+      <span class="field-icon">📝</span>
+      <textarea id="notes" placeholder=" ">Photosynthesis is the process by which green plants use sunlight, water, and carbon dioxide to produce glucose and oxygen. It occurs in chloroplasts and involves chlorophyll, which captures light energy. The light-dependent reactions occur in the thylakoid membranes, while the Calvin cycle takes place in the stroma.</textarea>
+      <label class="field-label" for="notes">Paste your study notes here...</label>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div style="font-weight:700; margin-bottom:10px; color:var(--text); font-size:14px;">🌍 Output Language</div>
+        <div class="chip-row" id="langChips">
+          <div class="chip active" data-lang="en">🇬🇧 English</div>
+          <div class="chip" data-lang="hi">🇮🇳 हिंदी</div>
+          <div class="chip" data-lang="hinglish">🌟 Hinglish</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-weight:700; margin-bottom:10px; color:var(--text); font-size:14px;">🎯 Number of Quizzes</div>
+        <div class="field" style="margin-bottom:0;">
+          <span class="field-icon">❓</span>
+          <select id="numQuizzes">
+            <option value="3">3 Questions 🌱</option>
+            <option value="5" selected>5 Questions 🌸</option>
+            <option value="8">8 Questions 🌻</option>
+            <option value="10">10 Questions 🌼</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 26px; text-align: center;">
+      <button class="btn-primary" id="generateBtn" onclick="generate()">
+        ✨ Generate AI Lesson
+      </button>
+    </div>
+  </div>
+
+  <div id="output"></div>
+</div>
+
+<footer>
+  Made with 💖 using FastAPI + AI · <a href="http://localhost:8000/docs" target="_blank">API Docs</a>
+</footer>
+
+<script>
+const API = "http://localhost:8000/api";
+const out = document.getElementById("output");
+const btn = document.getElementById("generateBtn");
+
+let selectedLang = "en";
+let currentResult = null;
+let quizState = {};
+const scenePlayers = {};
+
+document.querySelectorAll("#langChips .chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    document.querySelectorAll("#langChips .chip").forEach(c => c.classList.remove("active"));
+    chip.classList.add("active");
+    selectedLang = chip.dataset.lang;
+    if (currentResult) renderResults();
+  });
+});
+
+function setStep(n) {
+  [1,2,3].forEach(i => {
+    const el = document.getElementById("sstep-" + i);
+    if (i <= n) el.classList.add("active");
+    else el.classList.remove("active");
+  });
+}
+
+async function generate() {
+  btn.disabled = true;
+  btn.innerHTML = '<div class="dots"><span></span><span></span><span></span></div> Generating magic...';
+  out.innerHTML = "";
+  quizState = {};
+  setStep(2);
+
+  try {
+    setStatus("⏳ Uploading your notes...");
+
+    const upload = await fetch(`${API}/upload-notes`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        title: document.getElementById("title").value || "Untitled",
+        raw_text: document.getElementById("notes").value
+      })
+    });
+    if (!upload.ok) throw new Error("Upload failed");
+    const uploadJson = await upload.json();
+
+    setStatus("🧠 AI is working its magic...");
+
+    const gen = await fetch(`${API}/generate-content`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        note_id: uploadJson.note_id,
+        num_quizzes: parseInt(document.getElementById("numQuizzes").value),
+        languages: ["en", "hi", "hinglish"]
+      })
+    });
+    if (!gen.ok) throw new Error("Generation failed");
+    const genJson = await gen.json();
+
+    const stages = [
+      "📚 Extracting cute concepts...",
+      "🎬 Designing animated scenes...",
+      "❓ Crafting fun quizzes...",
+      "🌈 Translating to your languages...",
+      "✨ Adding final sparkles..."
+    ];
+
+    let result;
+    for (let i = 0; i < 40; i++) {
+      await new Promise(r => setTimeout(r, 1500));
+      const r2 = await fetch(`${API}/results/${genJson.generated_content_id}`);
+      result = await r2.json();
+      setStatus(stages[Math.min(i, stages.length - 1)]);
+      if (result.status === "completed" || result.status === "failed") break;
+    }
+
+    if (result.status === "completed") {
+      currentResult = result;
+      setStep(3);
+      renderResults();
+    } else {
+      setStatus("😢 " + (result.error_message || "Something went wrong"), "failed");
+    }
+  } catch (e) {
+    setStatus("😢 " + e.message, "failed");
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = "✨ Generate AI Lesson";
+  }
+}
+
+function setStatus(msg, type = "") {
+  let s = document.getElementById("statusBar");
+  if (!s) {
+    s = document.createElement("div");
+    s.id = "statusBar"; s.className = "card";
+    out.innerHTML = "";
+    out.appendChild(s);
+  }
+  const dots = !type ? '<div class="dots"><span></span><span></span><span></span></div>' : (type === "completed" ? "✅" : "💔");
+  s.innerHTML = `<div class="status ${type}">${dots}<span>${msg}</span></div>`;
+}
+
+function renderResults() {
+  const r = currentResult;
+  if (!r) return;
+
+  const bundle = (r.translations || []).find(t => t.language === selectedLang);
+  const concepts = bundle?.concepts || r.concepts || [];
+  const quizzes = bundle?.quizzes || r.quizzes || [];
+  const scenes = r.scene_plan || [];
+
+  const langLabel = {en: "English 🇬🇧", hi: "हिंदी 🇮🇳", hinglish: "Hinglish 🌟"}[selectedLang];
+
+  out.innerHTML = `
+    <div class="card">
+      <div class="status completed">✅ <span>Your lesson is ready! Currently in <b>${langLabel}</b></span></div>
+
+      <div class="stats-row">
+        <div class="stat"><div class="stat-icon">📚</div><div class="stat-value">${concepts.length}</div><div class="stat-label">Concepts</div></div>
+        <div class="stat"><div class="stat-icon">🎬</div><div class="stat-value">${scenes.length}</div><div class="stat-label">Scenes</div></div>
+        <div class="stat"><div class="stat-icon">❓</div><div class="stat-value">${quizzes.length}</div><div class="stat-label">Quizzes</div></div>
+        <div class="stat"><div class="stat-icon">⭐</div><div class="stat-value">${Math.round((r.validation_report?.score||0)*100)}%</div><div class="stat-label">Quality</div></div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" data-tab="concepts">📚 Concepts</div>
+        <div class="tab" data-tab="scenes">🎬 Scenes</div>
+        <div class="tab" data-tab="quizzes">❓ Quiz</div>
+      </div>
+
+      <div class="tab-panel active" id="tab-concepts">${renderConcepts(concepts)}</div>
+      <div class="tab-panel" id="tab-scenes">${renderScenes(scenes)}</div>
+      <div class="tab-panel" id="tab-quizzes">${renderQuizzes(quizzes)}</div>
+    </div>
+  `;
+
+  document.querySelectorAll(".tab").forEach(t => {
+    t.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+      document.querySelectorAll(".tab-panel").forEach(x => x.classList.remove("active"));
+      t.classList.add("active");
+      document.getElementById("tab-" + t.dataset.tab).classList.add("active");
+    });
+  });
+
+  scenes.forEach((s, i) => scenePlayers[i] = { scene: s, current: -1, playing: false, timer: null });
+  quizzes.forEach((q, i) => quizState[i] = { answered: false, correct: q.correct_index, explanation: q.explanation });
+}
+
+function renderConcepts(concepts) {
+  if (!concepts.length) return `<div class="empty"><div class="empty-icon">🌱</div>No concepts yet</div>`;
+  return concepts.map(c => `
+    <div class="concept">
+      <div class="concept-head">
+        <div class="concept-title">✨ ${c.title}</div>
+        <span class="diff diff-${c.difficulty || 'medium'}">${c.difficulty || 'medium'}</span>
+      </div>
+      <div class="concept-summary">${c.summary || ''}</div>
+      <div class="kw-row">${(c.keywords || []).map(k => `<span class="kw">#${k}</span>`).join("")}</div>
+    </div>
+  `).join("");
+}
+
+function renderScenes(scenes) {
+  if (!scenes.length) return `<div class="empty"><div class="empty-icon">🎬</div>No scenes yet</div>`;
+  return scenes.map((s, i) => `
+    <div class="scene-card">
+      <div class="scene-head">🎬 Scene ${i+1}: ${s.title}</div>
+      <div class="scene-stage">
+        <div class="scene-visual" id="visual-${i}">🎞️</div>
+        <div class="scene-narration" id="narration-${i}">Press play to start the animation ▶</div>
+      </div>
+      <div class="scene-controls">
+        <button class="play-btn" id="play-${i}" onclick="toggleScene(${i})">▶</button>
+        <div class="scene-progress"><div class="scene-progress-bar" id="progress-${i}"></div></div>
+        <div class="scene-step-info" id="step-info-${i}">0/${s.steps.length}</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function toggleScene(idx) {
+  const p = scenePlayers[idx];
+  if (p.playing) pauseScene(idx); else playScene(idx);
+}
+function playScene(idx) {
+  const p = scenePlayers[idx];
+  p.playing = true;
+  document.getElementById(`play-${idx}`).innerHTML = "⏸";
+  if (p.current >= p.scene.steps.length - 1) p.current = -1;
+  nextStep(idx);
+}
+function pauseScene(idx) {
+  const p = scenePlayers[idx];
+  p.playing = false;
+  document.getElementById(`play-${idx}`).innerHTML = "▶";
+  clearTimeout(p.timer);
+}
+function nextStep(idx) {
+  const p = scenePlayers[idx];
+  p.current++;
+  if (p.current >= p.scene.steps.length) { pauseScene(idx); return; }
+  const step = p.scene.steps[p.current];
+  const visual = document.getElementById(`visual-${idx}`);
+  const narration = document.getElementById(`narration-${idx}`);
+  const progress = document.getElementById(`progress-${idx}`);
+  const stepInfo = document.getElementById(`step-info-${idx}`);
+  const emojis = (step.visual.match(/\p{Emoji}/gu) || ["🎞️"]).join("");
+  visual.textContent = emojis;
+  visual.style.animation = "none";
+  setTimeout(() => visual.style.animation = "bounce 2s ease-in-out infinite", 10);
+  narration.textContent = step.narration;
+  progress.style.width = ((p.current + 1) / p.scene.steps.length * 100) + "%";
+  stepInfo.textContent = `${p.current + 1}/${p.scene.steps.length}`;
+  p.timer = setTimeout(() => { if (p.playing) nextStep(idx); }, (step.duration_sec || 4) * 1000);
+}
+
+function renderQuizzes(quizzes) {
+  if (!quizzes.length) return `<div class="empty"><div class="empty-icon">❓</div>No quizzes yet</div>`;
+  return quizzes.map((q, i) => `
+    <div class="quiz" id="quiz-${i}">
+      <div class="quiz-head">
+        <div class="quiz-q"><span class="q-badge">Q${i+1}</span> &nbsp; ${q.question}</div>
+        <span class="diff diff-${q.difficulty || 'medium'}">${q.difficulty || 'medium'}</span>
+      </div>
+      <div class="q-options">
+        ${(q.options || []).map((opt, j) => `
+          <div class="q-option" onclick="answerQuiz(${i}, ${j})">
+            <div class="q-letter">${String.fromCharCode(65+j)}</div>
+            <div>${opt}</div>
+          </div>
+        `).join("")}
+      </div>
+      <div id="explain-${i}"></div>
+    </div>
+  `).join("");
+}
+
+function answerQuiz(qIdx, optIdx) {
+  const state = quizState[qIdx];
+  if (!state || state.answered) return;
+  state.answered = true;
+  const options = document.querySelectorAll(`#quiz-${qIdx} .q-option`);
+  options.forEach(o => o.classList.add("disabled"));
+  const correctIdx = state.correct;
+  options[optIdx].classList.add(optIdx === correctIdx ? "correct" : "wrong");
+  if (optIdx !== correctIdx) options[correctIdx].classList.add("correct");
+  const isCorrect = optIdx === correctIdx;
+  document.getElementById(`explain-${qIdx}`).innerHTML = `
+    <div class="q-explain">
+      <b>${isCorrect ? "🎉 Yay, correct!" : "💡 Almost there!"}</b> ${state.explanation || ""}
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
