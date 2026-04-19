@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/note2motion"
 
+    # LLM provider selection (mock | groq | openai | anthropic)
+    LLM_PROVIDER: str = "mock"
+
     # Groq
     GROQ_API_KEY: str = ""
     GROQ_MODEL: str = "llama-3.3-70b-versatile"
