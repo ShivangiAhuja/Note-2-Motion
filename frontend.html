@@ -68,7 +68,7 @@
 
   body {
     font-family: 'Nunito', sans-serif;
-    background: linear-gradient(135deg, #fef3f7 0%, #e0e7ff 50%, #dbeafe 100%);
+    background: linear-gradient(135deg, #fdf4ff 0%, #eef2ff 40%, #e0f2fe 100%);
     min-height: 100vh;
     color: #2d2d2d;
   }
@@ -98,6 +98,7 @@
     box-shadow:
       0 10px 30px -5px rgba(139, 92, 246, 0.5),
       0 0 0 0 rgba(236, 72, 153, 0.5);
+    animation: gradient 6s ease infinite;
   }
   .cta-button::before {
     content: '';
@@ -114,10 +115,13 @@
   }
   .cta-button:hover {
     background-position: right center;
-    transform: translateY(-3px) scale(1.02);
+    transform: translateY(-4px) scale(1.04);
     box-shadow:
       0 20px 40px -10px rgba(139, 92, 246, 0.6),
       0 0 60px -10px rgba(236, 72, 153, 0.6);
+  }
+  .cta-button:active {
+    transform: scale(0.98);
   }
   .cta-button::after {
     content: '';
@@ -143,11 +147,15 @@
     border: 2px solid rgba(226, 232, 240, 0.8);
     border-radius: 16px;
     background: rgba(255, 255, 255, 0.85);
-    transition: all 0.3s;
+    transition: all 0.25s ease;
     font-family: inherit;
     color: #2d2d2d;
   }
   .float-input textarea { padding-top: 30px; min-height: 140px; resize: vertical; line-height: 1.6; }
+  .float-input input:hover,
+  .float-input textarea:hover {
+    border-color: #c4b5fd;
+  }
   .float-input input:focus,
   .float-input textarea:focus,
   .float-input select:focus {
@@ -203,6 +211,15 @@
     border: 1px solid rgba(255, 255, 255, 0.5);
   }
 
+  /* Card Hover Lift */
+  .card-hover {
+    transition: all 0.3s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 25px 50px -12px rgba(139,92,246,0.3);
+  }
+
   /* Pill chip toggle */
   .chip-toggle {
     padding: 10px 20px;
@@ -232,6 +249,7 @@
       0 10px 25px -5px rgba(139, 92, 246, 0.5),
       0 0 30px -5px rgba(236, 72, 153, 0.4);
     animation: gradient 6s ease infinite;
+    transform: scale(1.05);
   }
 
   /* Stat card accent colors */
@@ -274,13 +292,15 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.34;
     transition: transform 0.6s ease, opacity 0.6s ease;
+    opacity: 0;
     transform: scale(1.03);
+  }
+  .scene-topic-image.loaded {
+    opacity: 0.4;
   }
   .scene-video:hover .scene-topic-image {
     transform: scale(1.08);
-    opacity: 0.42;
   }
   .scene-image-overlay {
     position: absolute;
@@ -361,9 +381,7 @@
 
   <!-- Floating decorative elements -->
   <div class="absolute top-20 right-10 text-4xl animate-float">✨</div>
-  <div class="absolute top-40 left-10 text-3xl animate-float-slow">🌸</div>
   <div class="absolute bottom-40 right-20 text-4xl animate-float" style="animation-delay: 3s">💫</div>
-  <div class="absolute top-1/2 left-5 text-2xl animate-float-slow" style="animation-delay: 1s">⭐</div>
 </div>
 
 <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -407,7 +425,7 @@
   </div>
 
   <!-- Input Card -->
-  <div class="glass rounded-3xl p-6 sm:p-10 shadow-2xl shadow-purple-200/50 mb-8 animate-fade-up" style="animation-delay: 0.2s">
+  <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-10 shadow-[0_20px_60px_-10px_rgba(139,92,246,0.25)] border border-white/50 mb-8 animate-fade-up" style="animation-delay: 0.2s">
     <div class="flex items-center gap-3 mb-8">
       <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-300">✨</div>
       <div>
@@ -469,20 +487,44 @@
 
   <!-- Footer -->
   <footer class="text-center py-8 text-sm text-slate-500 font-semibold">
-    Made with 💜 · <a href="http://localhost:8000/docs" target="_blank" class="text-purple-600 hover:text-purple-800 underline">API Docs</a>
+    Made with 💜 · <a id="docsLink" href="http://localhost:8000/docs" target="_blank" class="text-purple-600 hover:text-purple-800 underline">API Docs</a>
   </footer>
 </div>
 
 <script>
-const API = "http://localhost:8000/api";
+function resolveApiBase() {
+  const params = new URLSearchParams(window.location.search);
+  const override = params.get("api");
+  if (override) {
+    return override.replace(/\/$/, "");
+  }
+
+  if (window.location.protocol === "file:") {
+    return "http://127.0.0.1:8000/api";
+  }
+
+  return `${window.location.origin}/api`;
+}
+
+const API = resolveApiBase();
+const DOCS_URL = API.replace(/\/api$/, "/docs");
 const out = document.getElementById("output");
 const btn = document.getElementById("generateBtn");
 const btnText = document.getElementById("btnText");
+document.getElementById("docsLink").href = DOCS_URL;
 
 let selectedLang = "en";
 let selectedQuizCount = 5;
 let currentResult = null;
 let quizState = {};
+
+async function apiFetch(path, options) {
+  try {
+    return await fetch(`${API}${path}`, options);
+  } catch (error) {
+    throw new Error(`Cannot reach the backend at ${API}. Start the FastAPI server, or pass a different base URL with ?api=https://host/api.`);
+  }
+}
 
 // ---------- Chip handlers ----------
 function bindChipGroup(selector, onSelect) {
@@ -538,7 +580,7 @@ async function generate() {
 
   try {
     updateLoadingMsg("📤 Uploading your notes...");
-    const upload = await fetch(`${API}/upload-notes`, {
+    const upload = await apiFetch(`/upload-notes`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
@@ -550,7 +592,7 @@ async function generate() {
     const uploadJson = await upload.json();
 
     updateLoadingMsg("🧠 AI is analyzing your notes...");
-    const gen = await fetch(`${API}/generate-content`, {
+    const gen = await apiFetch(`/generate-content`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
@@ -572,7 +614,8 @@ async function generate() {
     ];
     for (let i = 0; i < 40; i++) {
       await new Promise(r => setTimeout(r, 1500));
-      const r2 = await fetch(`${API}/results/${genJson.generated_content_id}`);
+      const r2 = await apiFetch(`/results/${genJson.generated_content_id}`);
+      if (!r2.ok) throw new Error(`Results request failed (${r2.status})`);
       result = await r2.json();
       updateLoadingMsg(stages[Math.min(i, stages.length - 1)]);
       if (result.status === "completed" || result.status === "failed") break;
@@ -628,12 +671,15 @@ function updateLoadingMsg(msg) {
 
 function renderError(msg) {
   out.innerHTML = `
-    <div class="glass rounded-3xl p-8 shadow-xl border-2 border-red-200 animate-scale-in">
-      <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-2xl">⚠️</div>
+    <div class="bg-white rounded-3xl p-8 shadow-xl border border-red-200 animate-scale-in">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-2xl">😅</div>
         <div>
-          <div class="font-bold text-red-600">Generation Failed</div>
+          <div class="font-bold text-red-600 text-lg">Oops! Something went wrong</div>
           <div class="text-sm text-slate-600 mt-1">${msg}</div>
+          <button onclick="generate()" class="mt-3 px-4 py-2 bg-red-500 text-white rounded-xl text-sm font-bold hover:scale-105 transition">
+            Retry
+          </button>
         </div>
       </div>
     </div>
@@ -738,7 +784,7 @@ function tabBtn(key, label, active) {
 function renderConcepts(concepts) {
   if (!concepts.length) return emptyState("No concepts found", "🔍");
   return `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">` + concepts.map((c, i) => `
-    <div class="bg-white rounded-3xl p-6 shadow-md hover:shadow-2xl hover:shadow-purple-200/50 transition-all hover:-translate-y-1 border border-white animate-fade-up" style="animation-delay: ${i*0.05}s">
+    <div class="bg-white rounded-3xl p-6 shadow-md card-hover border border-white animate-fade-up" style="animation-delay: ${i*0.05}s">
       <div class="flex items-start justify-between gap-3 mb-3">
         <div class="flex items-center gap-2">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm shadow-md">C${i+1}</div>
@@ -783,8 +829,12 @@ function updateSceneImage(idx, scene, step) {
   if (!img) return;
   const next = sceneImageUrl(scene, step);
   if (img.dataset.src === next) return;
+  img.classList.remove("loaded");
   img.dataset.src = next;
   img.classList.remove("hidden-image");
+  img.onload = () => {
+    img.classList.add("loaded");
+  };
   img.src = next;
 }
 
@@ -797,9 +847,17 @@ function handleSceneImageError(idx) {
 function renderScenes(scenes) {
   if (!scenes.length) return emptyState("No scenes generated", "🎬");
   return `<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">` + scenes.map((s, i) => `
-    <div class="scene-video animate-fade-up" style="animation-delay: ${i*0.08}s">
+    <div id="scene-${i}" class="scene-video card-hover animate-fade-up" style="animation-delay: ${i*0.08}s">
       <img id="scene-img-${i}" class="scene-topic-image" src="${sceneImageUrl(s)}" alt="Scene topic image" loading="lazy" referrerpolicy="no-referrer" onerror="handleSceneImageError(${i})" />
       <div class="scene-image-overlay"></div>
+
+      <div class="play-overlay absolute inset-0 flex items-center justify-center z-20">
+        <button 
+          onclick="playScene(${i})"
+          class="w-16 h-16 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white text-2xl shadow-xl hover:scale-110 transition-all">
+          ▶
+        </button>
+      </div>
 
       <!-- Top bar -->
       <div class="flex items-center justify-between px-5 pt-4 text-white/90">
@@ -816,14 +874,19 @@ function renderScenes(scenes) {
         <div id="narration-${i}" class="text-lg font-semibold leading-relaxed max-w-md px-4 text-white/95">
           ${s.title}
         </div>
+        <div class="text-xs mt-3 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white/80 font-bold">
+          ✨ Tap play to explore scene
+        </div>
         <div id="hint-${i}" class="text-xs mt-3 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm text-white/80 font-bold uppercase tracking-wider hidden"></div>
       </div>
 
       <!-- Controls -->
       <div class="flex items-center gap-3 px-5 py-4 bg-black/20 backdrop-blur-sm">
+        <button onclick="prevStep(${i})" class="text-white hover:text-pink-300 transition-transform hover:scale-110 text-xl font-bold">⏮</button>
         <button id="play-${i}" onclick="toggleScene(${i})"
           class="w-12 h-12 rounded-full bg-white text-purple-600 flex items-center justify-center shadow-lg hover:scale-110 transition-transform text-lg font-bold">▶</button>
-        <div class="flex-1">
+        <button onclick="nextStep(${i}, true)" class="text-white hover:text-pink-300 transition-transform hover:scale-110 text-xl font-bold">⏭</button>
+        <div class="flex-1 ml-2">
           <div class="text-xs font-bold text-white/80 mb-1" id="step-title-${i}">${s.title}</div>
           <div class="h-2 bg-white/20 rounded-full overflow-hidden">
             <div id="progress-${i}" class="h-full bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 rounded-full transition-all duration-300" style="width: 0%"></div>
@@ -842,6 +905,28 @@ function initScenePlayer(idx, scene) {
   updateSceneImage(idx, scene, scene.steps?.[0]);
 }
 
+function getSmartEmoji(text) {
+  if (!text) return "🎬";
+  const lower = text.toLowerCase();
+  if (lower.includes('water') || lower.includes('liquid') || lower.includes('cycle')) return "💧";
+  if (lower.includes('sun') || lower.includes('heat') || lower.includes('energy')) return "☀️";
+  if (lower.includes('plant') || lower.includes('tree') || lower.includes('leaf')) return "🌱";
+  if (lower.includes('animal') || lower.includes('dog') || lower.includes('cat')) return "🐾";
+  if (lower.includes('space') || lower.includes('star') || lower.includes('planet')) return "🌌";
+  if (lower.includes('brain') || lower.includes('think') || lower.includes('mind')) return "🧠";
+  if (lower.includes('history') || lower.includes('time') || lower.includes('past')) return "⏳";
+  if (lower.includes('math') || lower.includes('number') || lower.includes('calculate')) return "🔢";
+  if (lower.includes('science') || lower.includes('experiment') || lower.includes('lab')) return "🔬";
+  if (lower.includes('cloud') || lower.includes('vapor')) return "☁️";
+  if (lower.includes('rain') || lower.includes('drop')) return "🌧️";
+  if (lower.includes('river') || lower.includes('ocean')) return "🌊";
+  if (lower.includes('ice') || lower.includes('snow') || lower.includes('freeze')) return "❄️";
+  
+  // Default fallback by extracting any emoji in the text
+  const found = text.match(/\p{Emoji}/gu);
+  return found ? found.join("") : "🎬";
+}
+
 function toggleScene(idx) {
   const p = scenePlayers[idx];
   if (p.playing) pauseScene(idx);
@@ -849,6 +934,7 @@ function toggleScene(idx) {
 }
 function playScene(idx) {
   const p = scenePlayers[idx];
+  document.querySelector(`#scene-${idx} .play-overlay`)?.classList.add("hidden");
   p.playing = true;
   document.getElementById(`play-${idx}`).innerHTML = "⏸";
   if (p.current >= p.scene.steps.length - 1) p.current = -1;
@@ -860,10 +946,28 @@ function pauseScene(idx) {
   document.getElementById(`play-${idx}`).innerHTML = "▶";
   clearTimeout(p.timer);
 }
-function nextStep(idx) {
+function prevStep(idx) {
   const p = scenePlayers[idx];
+  pauseScene(idx);
+  if (p.current > 0) {
+    p.current--;
+    updateStepUI(idx);
+  }
+}
+function nextStep(idx, manual = false) {
+  const p = scenePlayers[idx];
+  if (manual) pauseScene(idx);
   p.current++;
   if (p.current >= p.scene.steps.length) { pauseScene(idx); return; }
+  updateStepUI(idx);
+  
+  if (!manual && p.playing) {
+    const step = p.scene.steps[p.current];
+    p.timer = setTimeout(() => { if (p.playing) nextStep(idx); }, (step.duration_sec || 4) * 1000);
+  }
+}
+function updateStepUI(idx) {
+  const p = scenePlayers[idx];
   const step = p.scene.steps[p.current];
   const visual = document.getElementById(`visual-${idx}`);
   const narration = document.getElementById(`narration-${idx}`);
@@ -871,7 +975,7 @@ function nextStep(idx) {
   const stepInfo = document.getElementById(`step-info-${idx}`);
   const hint = document.getElementById(`hint-${idx}`);
 
-  const emojis = (step.visual?.match(/\p{Emoji}/gu) || ["🎞️"]).join("");
+  const emojis = getSmartEmoji(step.narration + " " + (step.visual || ""));
   visual.style.transform = "scale(0.5)";
   visual.style.opacity = "0";
   setTimeout(() => {
@@ -889,14 +993,14 @@ function nextStep(idx) {
   if (step.animation_hint) {
     hint.textContent = "✨ " + step.animation_hint;
     hint.classList.remove("hidden");
+  } else {
+    hint.classList.add("hidden");
   }
 
   updateSceneImage(idx, p.scene, step);
 
   progress.style.width = ((p.current + 1) / p.scene.steps.length * 100) + "%";
   stepInfo.textContent = `${p.current + 1}/${p.scene.steps.length}`;
-
-  p.timer = setTimeout(() => { if (p.playing) nextStep(idx); }, (step.duration_sec || 4) * 1000);
 }
 
 // ---------- Quiz ----------
@@ -908,7 +1012,7 @@ function renderQuizzes(quizzes) {
     </div>
     <div class="grid grid-cols-1 gap-5">
     ${quizzes.map((q, i) => `
-      <div id="quiz-${i}" class="bg-white rounded-3xl p-6 shadow-md hover:shadow-xl transition-all border border-white animate-fade-up" style="animation-delay: ${i*0.05}s">
+      <div id="quiz-${i}" class="bg-white rounded-3xl p-6 shadow-md border border-white card-hover animate-fade-up" style="animation-delay: ${i*0.05}s">
         <div class="flex items-start justify-between gap-3 mb-5">
           <div class="flex items-start gap-3 flex-1">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 text-white flex items-center justify-center font-display font-bold text-sm shadow-md flex-shrink-0">Q${i+1}</div>
