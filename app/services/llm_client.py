@@ -24,16 +24,27 @@ class LLMClient:
     async def complete(self, prompt: str, system: Optional[str] = None, temperature: float = 0.2) -> str:
         logger.debug(f"LLM provider={self.provider} | prompt chars={len(prompt)}")
 
-        if self.provider == "mock":
-            return self._mock_response(prompt)
-        if self.provider == "openai":
-            return await self._openai(prompt, system, temperature)
-        if self.provider == "anthropic":
-            return await self._anthropic(prompt, system, temperature)
-        if self.provider == "groq":
-            return await self._groq(prompt, system, temperature)
-
-        raise LLMError(f"Unknown LLM provider: {self.provider}")
+        try:
+            if self.provider == "mock":
+                result = self._mock_response(prompt)
+            elif self.provider == "openai":
+                result = await self._openai(prompt, system, temperature)
+            elif self.provider == "anthropic":
+                result = await self._anthropic(prompt, system, temperature)
+            elif self.provider == "groq":
+                result = await self._groq(prompt, system, temperature)
+            else:
+                raise LLMError(f"Unknown LLM provider: {self.provider}")
+            
+            # Simple JSON validation check if system prompt mentions JSON
+            if system and "json" in system.lower():
+                from app.utils.json_utils import extract_json
+                extract_json(result) # Validate it parses correctly
+                
+            return result
+        except Exception as e:
+            logger.warning(f"LLM complete failed (retrying): {e}")
+            raise LLMError(f"LLM completion failed: {e}")
 
     async def _groq(self, prompt: str, system: Optional[str], temperature: float) -> str:
         """Groq — OpenAI-compatible, fast, free tier available."""

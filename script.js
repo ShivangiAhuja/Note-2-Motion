@@ -1,497 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Note2Motion — AI Learning Studio</title>
-
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-
-<!-- Tailwind CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          display: ['Poppins', 'sans-serif'],
-          sans: ['Nunito', 'sans-serif'],
-        },
-        animation: {
-          'shimmer': 'shimmer 2.5s linear infinite',
-          'float': 'float 6s ease-in-out infinite',
-          'float-slow': 'float 9s ease-in-out infinite',
-          'blob': 'blob 7s infinite',
-          'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-          'gradient': 'gradient 6s ease infinite',
-          'bounce-slow': 'bounce 3s ease-in-out infinite',
-          'spin-slow': 'spin 20s linear infinite',
-          'fade-up': 'fadeUp 0.6s ease-out',
-          'scale-in': 'scaleIn 0.4s ease-out',
-        },
-        keyframes: {
-          shimmer: {
-            '0%': { backgroundPosition: '-200% 0' },
-            '100%': { backgroundPosition: '200% 0' },
-          },
-          float: {
-            '0%, 100%': { transform: 'translate(0px, 0px) rotate(0deg)' },
-            '50%': { transform: 'translate(20px, -30px) rotate(5deg)' },
-          },
-          blob: {
-            '0%, 100%': { transform: 'translate(0px, 0px) scale(1)' },
-            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-          },
-          gradient: {
-            '0%, 100%': { backgroundPosition: '0% 50%' },
-            '50%': { backgroundPosition: '100% 50%' },
-          },
-          fadeUp: {
-            '0%': { opacity: '0', transform: 'translateY(20px)' },
-            '100%': { opacity: '1', transform: 'translateY(0)' },
-          },
-          scaleIn: {
-            '0%': { opacity: '0', transform: 'scale(0.95)' },
-            '100%': { opacity: '1', transform: 'scale(1)' },
-          },
-        },
-      }
-    }
-  }
-</script>
-
-<style>
-  * { -webkit-tap-highlight-color: transparent; }
-
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: linear-gradient(135deg, #fdf4ff 0%, #eef2ff 40%, #e0f2fe 100%);
-    min-height: 100vh;
-    color: #2d2d2d;
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-track { background: rgba(255,255,255,0.3); }
-  ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #c4b5fd, #f0abfc); border-radius: 10px; }
-  ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #a78bfa, #e879f9); }
-
-  /* Gradient text */
-  .gradient-text {
-    background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    background-size: 200% auto;
-    animation: gradient 6s ease infinite;
-  }
-
-  /* Primary CTA with shimmer */
-  .cta-button {
-    position: relative;
-    background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
-    background-size: 200% auto;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow:
-      0 10px 30px -5px rgba(139, 92, 246, 0.5),
-      0 0 0 0 rgba(236, 72, 153, 0.5);
-    animation: gradient 6s ease infinite;
-  }
-  .cta-button::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 2px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.6), transparent);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-  .cta-button:hover {
-    background-position: right center;
-    transform: translateY(-4px) scale(1.04);
-    box-shadow:
-      0 20px 40px -10px rgba(139, 92, 246, 0.6),
-      0 0 60px -10px rgba(236, 72, 153, 0.6);
-  }
-  .cta-button:active {
-    transform: scale(0.98);
-  }
-  .cta-button::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    background-size: 200% 100%;
-    animation: shimmer 2.5s linear infinite;
-    pointer-events: none;
-  }
-  .cta-button:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
-  .cta-button:disabled::after { display: none; }
-
-  /* Floating input labels */
-  .float-input { position: relative; }
-  .float-input input,
-  .float-input textarea,
-  .float-input select {
-    width: 100%;
-    padding: 24px 16px 10px 48px;
-    font-size: 15px;
-    border: 2px solid rgba(226, 232, 240, 0.8);
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.85);
-    transition: all 0.25s ease;
-    font-family: inherit;
-    color: #2d2d2d;
-  }
-  .float-input textarea { padding-top: 30px; min-height: 140px; resize: vertical; line-height: 1.6; }
-  .float-input input:hover,
-  .float-input textarea:hover {
-    border-color: #c4b5fd;
-  }
-  .float-input input:focus,
-  .float-input textarea:focus,
-  .float-input select:focus {
-    outline: none;
-    border-color: #a78bfa;
-    background: white;
-    box-shadow:
-      0 0 0 4px rgba(167, 139, 250, 0.15),
-      0 10px 30px -10px rgba(139, 92, 246, 0.3);
-    transform: translateY(-1px);
-  }
-  .float-input label {
-    position: absolute;
-    left: 48px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 15px;
-    color: #64748b;
-    font-weight: 600;
-    pointer-events: none;
-    transition: all 0.2s ease;
-  }
-  .float-input.textarea label {
-    top: 16px;
-    transform: none;
-    font-size: 13px;
-  }
-  .float-input input:focus ~ label,
-  .float-input input:not(:placeholder-shown) ~ label,
-  .float-input textarea:focus ~ label,
-  .float-input textarea:not(:placeholder-shown) ~ label,
-  .float-input select:focus ~ label,
-  .float-input select:valid ~ label {
-    top: 8px;
-    transform: none;
-    font-size: 12px;
-    color: #7c3aed;
-  }
-  .float-input .icon {
-    position: absolute;
-    left: 16px;
-    top: 16px;
-    font-size: 20px;
-    pointer-events: none;
-  }
-  .float-input.textarea .icon { top: 18px; }
-
-  /* Glass effect */
-  .glass {
-    background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-  }
-
-  /* Card Hover Lift */
-  .card-hover {
-    transition: all 0.3s ease;
-  }
-  .card-hover:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 25px 50px -12px rgba(139,92,246,0.3);
-  }
-
-  /* Pill chip toggle */
-  .chip-toggle {
-    padding: 10px 20px;
-    border-radius: 999px;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s;
-    border: 2px solid rgba(226, 232, 240, 0.8);
-    background: white;
-    user-select: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .chip-toggle:hover {
-    border-color: #c4b5fd;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px -5px rgba(139, 92, 246, 0.3);
-  }
-  .chip-toggle.active {
-    background: linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6);
-    background-size: 200% auto;
-    color: white;
-    border-color: transparent;
-    box-shadow:
-      0 10px 25px -5px rgba(139, 92, 246, 0.5),
-      0 0 30px -5px rgba(236, 72, 153, 0.4);
-    animation: gradient 6s ease infinite;
-    transform: scale(1.05);
-  }
-
-  /* Stat card accent colors */
-  .stat-pink { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
-  .stat-purple { background: linear-gradient(135deg, #ede9fe, #ddd6fe); }
-  .stat-blue { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
-  .stat-cyan { background: linear-gradient(135deg, #cffafe, #a5f3fc); }
-
-  .stat-icon-pink { background: linear-gradient(135deg, #f472b6, #ec4899); }
-  .stat-icon-purple { background: linear-gradient(135deg, #a78bfa, #8b5cf6); }
-  .stat-icon-blue { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
-  .stat-icon-cyan { background: linear-gradient(135deg, #22d3ee, #06b6d4); }
-
-  /* Scene card video-like */
-  .scene-video {
-    position: relative;
-    border-radius: 24px;
-    overflow: hidden;
-    background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 50%, #db2777 100%);
-    box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.4);
-    transition: all 0.4s;
-  }
-  .scene-video::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    background: linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6);
-    border-radius: 24px;
-    z-index: -1;
-    filter: blur(12px);
-    opacity: 0.6;
-    transition: opacity 0.4s;
-  }
-  .scene-video:hover { transform: translateY(-8px) scale(1.01); }
-  .scene-video:hover::before { opacity: 1; }
-
-  .scene-topic-image {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s ease, opacity 0.6s ease;
-    opacity: 0;
-    transform: scale(1.03);
-  }
-  .scene-topic-image.loaded {
-    opacity: 0.4;
-  }
-  .scene-video:hover .scene-topic-image {
-    transform: scale(1.08);
-  }
-  .scene-image-overlay {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.25), transparent 40%),
-                linear-gradient(180deg, rgba(34, 9, 81, 0.25) 0%, rgba(17, 8, 38, 0.55) 100%);
-    pointer-events: none;
-  }
-  .scene-topic-image.hidden-image {
-    display: none;
-  }
-
-  /* Shimmer skeleton */
-  .skeleton {
-    background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s linear infinite;
-  }
-
-  /* Loading dots */
-  .dot-loader { display: inline-flex; gap: 4px; }
-  .dot-loader span {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: currentColor;
-    animation: dotBounce 1.4s infinite ease-in-out;
-  }
-  .dot-loader span:nth-child(1) { animation-delay: -0.32s; }
-  .dot-loader span:nth-child(2) { animation-delay: -0.16s; }
-  @keyframes dotBounce {
-    0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
-    40% { transform: scale(1); opacity: 1; }
-  }
-
-  /* Step indicator */
-  .step-connector {
-    flex: 1; height: 3px;
-    background: linear-gradient(90deg, #c4b5fd, #e2e8f0);
-    border-radius: 2px;
-    margin: 0 8px;
-    transition: all 0.4s;
-  }
-  .step-connector.active {
-    background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
-    background-size: 200% auto;
-    animation: gradient 3s ease infinite;
-  }
-
-  /* Quiz option polish */
-  .quiz-opt { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
-  .quiz-opt:not(.disabled):hover {
-    transform: translateX(6px);
-    border-color: #a78bfa !important;
-    box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.25);
-  }
-
-  /* Difficulty */
-  .diff-easy { background: linear-gradient(135deg, #bbf7d0, #86efac); color: #14532d; }
-  .diff-medium { background: linear-gradient(135deg, #fed7aa, #fdba74); color: #7c2d12; }
-  .diff-hard { background: linear-gradient(135deg, #fecaca, #fca5a5); color: #7f1d1d; }
-
-  /* Animated blobs */
-  .blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.5;
-    pointer-events: none;
-  }
-</style>
-</head>
-<body class="font-sans antialiased">
-
-<!-- Animated Background Blobs -->
-<div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-  <div class="blob w-96 h-96 bg-pink-300 top-0 -left-20 animate-blob"></div>
-  <div class="blob w-96 h-96 bg-purple-300 top-1/3 right-0 animate-blob" style="animation-delay: 2s"></div>
-  <div class="blob w-96 h-96 bg-blue-300 bottom-0 left-1/3 animate-blob" style="animation-delay: 4s"></div>
-
-  <!-- Floating decorative elements -->
-  <div class="absolute top-20 right-10 text-4xl animate-float">✨</div>
-  <div class="absolute bottom-40 right-20 text-4xl animate-float" style="animation-delay: 3s">💫</div>
-</div>
-
-<div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-
-  <!-- Hero -->
-  <header class="text-center mb-12 animate-fade-up">
-    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6 shadow-sm">
-      <span class="relative flex h-2 w-2">
-        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
-        <span class="relative inline-flex rounded-full h-2 w-2 bg-pink-500"></span>
-      </span>
-      <span class="text-sm font-bold text-slate-700">AI-Powered · Live</span>
-    </div>
-
-    <h1 class="font-display font-black text-5xl sm:text-6xl md:text-7xl leading-tight mb-4">
-      <span class="gradient-text">Note2Motion</span>
-    </h1>
-    <p class="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto font-semibold">
-      Turn boring study notes into 🎬 animated scenes, 🧠 concepts & 🎯 interactive quizzes — in seconds.
-    </p>
-  </header>
-
-  <!-- Step Indicator -->
-  <div class="max-w-2xl mx-auto mb-10 animate-fade-up" style="animation-delay: 0.1s">
-    <div class="flex items-center">
-      <div class="flex flex-col items-center">
-        <div id="step-1" class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 text-white flex items-center justify-center font-bold shadow-lg shadow-purple-300 ring-4 ring-white">1</div>
-        <span class="text-xs font-bold text-slate-700 mt-2">Create</span>
-      </div>
-      <div id="conn-1" class="step-connector"></div>
-      <div class="flex flex-col items-center">
-        <div id="step-2" class="w-12 h-12 rounded-full bg-white text-slate-400 flex items-center justify-center font-bold shadow-md ring-2 ring-slate-200 transition-all">2</div>
-        <span class="text-xs font-bold text-slate-500 mt-2">Generate</span>
-      </div>
-      <div id="conn-2" class="step-connector"></div>
-      <div class="flex flex-col items-center">
-        <div id="step-3" class="w-12 h-12 rounded-full bg-white text-slate-400 flex items-center justify-center font-bold shadow-md ring-2 ring-slate-200 transition-all">3</div>
-        <span class="text-xs font-bold text-slate-500 mt-2">Learn</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Input Card -->
-  <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-10 shadow-[0_20px_60px_-10px_rgba(139,92,246,0.25)] border border-white/50 mb-8 animate-fade-up" style="animation-delay: 0.2s">
-    <div class="flex items-center gap-3 mb-8">
-      <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-300">✨</div>
-      <div>
-        <h2 class="font-display font-bold text-2xl text-slate-800">Create Your Lesson</h2>
-        <p class="text-sm text-slate-500 font-semibold">Paste notes · pick a language · hit generate</p>
-      </div>
-    </div>
-
-    <div class="space-y-5">
-      <!-- Title -->
-      <div class="float-input">
-        <span class="icon">📘</span>
-        <input id="title" type="text" value="Photosynthesis" placeholder=" " />
-        <label for="title">Lesson Title</label>
-      </div>
-
-      <!-- Notes -->
-      <div class="float-input textarea">
-        <span class="icon">📝</span>
-        <textarea id="notes" placeholder=" ">Photosynthesis is the process by which green plants use sunlight, water, and carbon dioxide to produce glucose and oxygen. It occurs in chloroplasts and involves chlorophyll, which captures light energy. The light-dependent reactions occur in the thylakoid membranes, while the Calvin cycle takes place in the stroma.</textarea>
-        <label for="notes">Your Study Notes</label>
-      </div>
-
-      <!-- Row: Language + Quiz count -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div>
-          <label class="block text-xs font-bold text-slate-600 mb-3 ml-1 uppercase tracking-wider">🌍 Output Language</label>
-          <div class="flex flex-wrap gap-2" id="langChips">
-            <div class="chip-toggle active" data-lang="en">🇬🇧 English</div>
-            <div class="chip-toggle" data-lang="hi">🇮🇳 हिंदी</div>
-            <div class="chip-toggle" data-lang="hinglish">🌟 Hinglish</div>
-          </div>
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-600 mb-3 ml-1 uppercase tracking-wider">🎯 Quiz Count</label>
-          <div class="flex flex-wrap gap-2" id="quizChips">
-            <div class="chip-toggle" data-q="3">3</div>
-            <div class="chip-toggle active" data-q="5">5</div>
-            <div class="chip-toggle" data-q="8">8</div>
-            <div class="chip-toggle" data-q="10">10</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CTA -->
-      <button id="generateBtn" onclick="generate()"
-        class="cta-button w-full text-white font-bold text-lg py-5 px-8 rounded-2xl font-display tracking-wide relative overflow-hidden mt-3">
-        <span id="btnText" class="relative z-10 flex items-center justify-center gap-3">
-          <span>✨</span>
-          <span>Generate AI Lesson</span>
-          <span>→</span>
-        </span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Output area -->
-  <div id="output"></div>
-
-  <!-- Footer -->
-  <footer class="text-center py-8 text-sm text-slate-500 font-semibold">
-    Made with 💜 · <a id="docsLink" href="http://localhost:8000/docs" target="_blank" class="text-purple-600 hover:text-purple-800 underline">API Docs</a>
-  </footer>
-</div>
-
-<script>
 function resolveApiBase() {
   const params = new URLSearchParams(window.location.search);
   const override = params.get("api");
@@ -821,7 +327,7 @@ function hashCode(text) {
 function sceneImageUrl(scene, step) {
   const base = normalizeImageQuery(`${scene?.title || "education"} ${step?.narration || ""}`);
   const sig = hashCode(`${scene?.scene_id || scene?.title || "scene"}-${step?.step_id || 0}`) % 1000;
-  return `https://source.unsplash.com/1600x900/?${encodeURIComponent(base)}&sig=${sig}`;
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(base)}?width=1600&height=900&nologo=true`;
 }
 
 function updateSceneImage(idx, scene, step) {
@@ -874,7 +380,7 @@ function renderScenes(scenes) {
         <div id="narration-${i}" class="text-lg font-semibold leading-relaxed max-w-md px-4 text-white/95">
           ${s.title}
         </div>
-        <div class="text-xs mt-3 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white/80 font-bold">
+        <div id="start-hint-${i}" class="text-xs mt-3 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white/80 font-bold transition-all duration-300">
           ✨ Tap play to explore scene
         </div>
         <div id="hint-${i}" class="text-xs mt-3 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm text-white/80 font-bold uppercase tracking-wider hidden"></div>
@@ -935,6 +441,7 @@ function toggleScene(idx) {
 function playScene(idx) {
   const p = scenePlayers[idx];
   document.querySelector(`#scene-${idx} .play-overlay`)?.classList.add("hidden");
+  document.getElementById(`start-hint-${idx}`)?.classList.add("hidden");
   p.playing = true;
   document.getElementById(`play-${idx}`).innerHTML = "⏸";
   if (p.current >= p.scene.steps.length - 1) p.current = -1;
@@ -976,13 +483,47 @@ function updateStepUI(idx) {
   const hint = document.getElementById(`hint-${idx}`);
 
   const emojis = getSmartEmoji(step.narration + " " + (step.visual || ""));
-  visual.style.transform = "scale(0.5)";
-  visual.style.opacity = "0";
+  
+  // Custom Animations based on the AI's hint!
+  const animHint = (step.animation_hint || "fade-in").toLowerCase();
+  
+  // Pre-animation state
+  visual.style.transition = "none";
+  if (animHint.includes("zoom") || animHint.includes("grow")) {
+    visual.style.transform = "scale(0.1)";
+    visual.style.opacity = "0";
+  } else if (animHint.includes("slide") || animHint.includes("move")) {
+    visual.style.transform = "translateX(-100px)";
+    visual.style.opacity = "0";
+  } else if (animHint.includes("draw")) {
+    visual.style.transform = "scale(0.8) rotate(-15deg)";
+    visual.style.opacity = "0";
+  } else if (animHint.includes("drop") || animHint.includes("fall")) {
+    visual.style.transform = "translateY(-100px)";
+    visual.style.opacity = "0";
+  } else {
+    // Default fade
+    visual.style.transform = "scale(0.9)";
+    visual.style.opacity = "0";
+  }
+
+  // Force reflow
+  void visual.offsetWidth;
+
+  // Post-animation state
+  visual.style.transition = "all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)";
   setTimeout(() => {
     visual.textContent = emojis;
-    visual.style.transform = "scale(1)";
+    visual.style.transform = "translate(0, 0) scale(1) rotate(0deg)";
     visual.style.opacity = "1";
-  }, 200);
+    
+    // Add continuous bounce if it's supposed to hover/float
+    if (animHint.includes("float") || animHint.includes("hover")) {
+      visual.classList.add("animate-bounce-slow");
+    } else {
+      visual.classList.remove("animate-bounce-slow");
+    }
+  }, 50);
 
   narration.style.opacity = "0";
   setTimeout(() => {
@@ -990,12 +531,8 @@ function updateStepUI(idx) {
     narration.style.opacity = "1";
   }, 250);
 
-  if (step.animation_hint) {
-    hint.textContent = "✨ " + step.animation_hint;
-    hint.classList.remove("hidden");
-  } else {
-    hint.classList.add("hidden");
-  }
+  // Animation hint tags are hidden/removed completely per user feedback
+  hint.classList.add("hidden");
 
   updateSceneImage(idx, p.scene, step);
 
@@ -1092,6 +629,35 @@ function emptyState(msg, icon) {
     </div>
   `;
 }
-</script>
-</body>
-</html>
+
+// ---------- Keyboard Controls ----------
+document.addEventListener('keydown', (e) => {
+  if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+
+  const tabScenes = document.getElementById('tab-scenes');
+  if (!tabScenes || tabScenes.classList.contains('hidden')) return;
+
+  const activeSceneIds = Object.keys(scenePlayers).filter(id => {
+      const el = document.getElementById(`scene-${id}`);
+      return el;
+  });
+
+  if (activeSceneIds.length > 0) {
+      let idx = activeSceneIds[0];
+      const hovered = document.querySelector('.scene-video:hover');
+      if (hovered) {
+          idx = hovered.id.replace('scene-', '');
+      }
+      
+      if (e.code === 'Space') {
+          e.preventDefault();
+          toggleScene(idx);
+      } else if (e.code === 'ArrowRight') {
+          e.preventDefault();
+          nextStep(idx, true);
+      } else if (e.code === 'ArrowLeft') {
+          e.preventDefault();
+          prevStep(idx);
+      }
+  }
+});
