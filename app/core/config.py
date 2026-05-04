@@ -4,8 +4,10 @@ All env vars flow through this single object.
 """
 
 from typing import List
+import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+ENV_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env")
 
 class Settings(BaseSettings):
     # App
@@ -29,7 +31,7 @@ class Settings(BaseSettings):
     MAX_NOTE_CHARS: int = 20000
     DEFAULT_LANGUAGES: str = "en,hi,hinglish"
 
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=ENV_PATH, extra="ignore")
 
     @property
     def default_languages_list(self) -> List[str]:
